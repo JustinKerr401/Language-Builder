@@ -25,8 +25,11 @@ async function submitMorpheme(){
     const meanings = document.querySelectorAll("#addMeanings input")
     let meaningsArray = []
     meanings.forEach(meaning => {
-        meaningsArray.push(meaning.value.toLowerCase())
+        console.log(meaning)
+        if (meaning.value!="") meaningsArray.push(meaning.value.toLowerCase())
     })
+    if (meaningsArray.length == 1) meaningsArray = meaningsArray[0]
+    console.log(meaningsArray, meaningsArray.length)
     const morphemeSave = {
         morpheme: document.getElementById("morphemeInput").value.toLowerCase(),
         language: document.getElementById("language").value.toLowerCase(),
@@ -36,8 +39,6 @@ async function submitMorpheme(){
         derived_from: document.getElementById("derived_from").value.toLowerCase(),
         real_meaning: meaningsArray
     }
-
-    console.log(morphemeSave)
 
     try {
         const response = await fetch("/save-morpheme", {

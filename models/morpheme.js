@@ -7,7 +7,7 @@ const morphemeSchema = new mongoose.Schema({
     meaning: { type: String },
     inspiration_language: { type: String },
     derived_from: { type: String },
-    real_meaning: { type: [String], default: [] }
+    real_meaning: { type: mongoose.Schema.Types.Mixed }
 });
 
 module.exports = mongoose.model("Morpheme", morphemeSchema, "morphemes");
