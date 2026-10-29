@@ -1,0 +1,45 @@
+body{
+    background-color: rgb(1, 111, 190);
+}
+
+main{
+    background-color: white;
+    margin: 100px 60px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+section{
+    border: 1px solid red;
+}
+
+#morpheme{
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+#morpheme h1{
+    font-size: 1.5rem;
+    font-weight: normal;
+    margin: auto;
+    text-align: center;
+    width: 70%;
+}
+
+#morpheme > input{
+    margin-bottom: 30px;
+}
+
+#addMeanings{
+    grid-column-start: 1;
+    grid-column-end: 4;
+    display: grid;
+    grid-template-columns: 4fr 1fr;
+}
+
+#addMeanings h1, #addMeaningReference, #submitMorpheme{
+    grid-column-start: 1;
+    grid-column-end: -1;
+}

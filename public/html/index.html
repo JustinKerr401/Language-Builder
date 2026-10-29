@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to language builder!</title>
+    <link rel="stylesheet" href="../css/main.css">
+</head>
+<body>
+    
+    <main>
+        <h1>Welcome to the language builder!</h1>
+        
+        <section>
+            <button onclick="toggleSubmissionDiv('morpheme')">Add Morpheme</button>
+            <button onclick="toggleSubmissionDiv('word')">Add Word</button>
+            <button onclick="toggleSubmissionDiv('eMorpheme')">Edit Morpheme</button>
+            <button onclick="toggleSubmissionDiv('word')">Edit Word</button>
+        </section>
+
+        <section id="morpheme" class="inputs">
+            <h1>What is the morpheme?</h1>
+            <h1>What language does this belong to?</h1>
+            <h1>What morpheme does this one derive from?</h1>
+            <input id="morphemeInput" placeholder="Morpheme">
+            <input id="language" placeholder="Language">
+            <input id="derives" placeholder="Derives">
+            <h1>What does the morpheme mean?</h1>
+            <h1>What real world language does this comes from?</h1>
+            <h1>What real morpheme does this derive from?</h1>
+            <input id="meaning" placeholder="Meaning">
+            <input id="inspiration_language" placeholder="Inspiration Language">
+            <input id="derived_from" placeholder="Derived From">
+            <div id="addMeanings">
+                <h1>Input the real world meaning(s) of this morpheme</h1>
+                <input placeholder="Meaning">
+                <button onclick="removeMeaning(this)">x</button>
+                <button onclick="addMeaning()" id="addMeaningReference">+ Add another entry</button>
+            </div>
+            <button id="submitMorpheme" onclick="submitMorpheme()">Submit</button>
+        </section>
+
+        <section id="word" class="inputs">
+            <input id="word" placeholder="Word">
+            <select>
+                <option value="simplex">Simplex</option>
+                <option value="complex">Complex</option>
+                <option value="compound">Compound</option>
+            </select>
+            <select>
+                <option value="noun">Noun</option>
+                <option value="verb">Verb</option>
+                <option value="adjective">Adjective</option>
+            </select>
+            <select>
+                <option value="personal name">Personal name</option>
+                <option value="family name">Family name</option>
+                <option value="group name">Group name</option>
+                <option value="place name">Place name</option>
+                <option value="title">Title</option>
+                <option value="artifact name">Artifact name</option>
+            </select>
+            <div id="addMeanings">
+                <p>List meaning(s)</p>
+                <input placeholder="Meaning">
+                <button onclick="removeMeaning(this)">x</button>
+                <button onclick="addMeaning()" id="addMeaningReference">+ Add another entry</button>
+            </div>
+        </section>
+
+    </main>
+
+
+    <script src="../js/index.js"></script>
+</body>
+</html>
