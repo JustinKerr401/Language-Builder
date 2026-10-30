@@ -18,12 +18,15 @@ function hideSections(){
 
 editSelector.addEventListener("change", () => {
     if (editSelector.value !== ""){
-
+        console.log("Hello")
     }
 })
 
 function togglePage(variant, edit){ 
-    if (edit){
+    if (edit && editHeader.textContent.split(" ")[1] == variant) {
+        editMenu.style.display = "none"
+        editHeader.textContent = ""
+    }else if (edit){
         hideSections()
         editMenu.style.display = "flex"
         const datalistName = `${variant}List`
@@ -39,8 +42,8 @@ function togglePage(variant, edit){
         hideSections()
     } else if (!edit && document.getElementById(variant).style.display == "none"){
         hideSections()
-        document.getElementById(variant).style.display = "grid"
         editMenu.style.display = "none"
+        document.getElementById(variant).style.display = "grid"
     }
 }
 
