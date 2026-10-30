@@ -1,4 +1,7 @@
-const submissionDiv = document.getElementById("submission")
+// Editing menu items
+const editMenu = document.getElementById("editMenu") 
+const editHeader = document.getElementById("editHeader")
+const editSelector = document.getElementById("editSelector") 
 
 hideSections()
 getMorphemesList()
@@ -13,12 +16,31 @@ function hideSections(){
     })
 }
 
-async function toggleSubmissionDiv(variant){
-    if (document.getElementById(variant).style.display == "grid"){
+editSelector.addEventListener("change", () => {
+    if (editSelector.value !== ""){
+
+    }
+})
+
+function togglePage(variant, edit){ 
+    if (edit){
         hideSections()
-    } else {
+        editMenu.style.display = "flex"
+        const datalistName = `${variant}List`
+        document.querySelector("#editMenu h1").textContent = `What ${variant} are you trying to edit?`
+        editSelector.innerHTML = ""
+        document.getElementById(datalistName).querySelectorAll("option").forEach(option => {
+            const newOption = document.createElement("option")
+            newOption.value = option.value
+            newOption.textContent = option.value
+            editSelector.append(newOption)
+        })
+    } else if (!edit && document.getElementById(variant).style.display == "grid"){
+        hideSections()
+    } else if (!edit && document.getElementById(variant).style.display == "none"){
         hideSections()
         document.getElementById(variant).style.display = "grid"
+        editMenu.style.display = "none"
     }
 }
 

@@ -12,10 +12,17 @@
         <h1 style="margin: auto">Welcome to the language builder!</h1>
 
         <div id="toggleButtons">
-            <button onclick="toggleSubmissionDiv('morpheme')">Add Morpheme</button>
-            <button onclick="toggleSubmissionDiv('word')">Add Word</button>
-            <button onclick="toggleSubmissionDiv('eMorpheme')">Edit Morpheme</button>
-            <button onclick="toggleSubmissionDiv('eWord')">Edit Word</button>
+            <button onclick="togglePage('morpheme')">Add Morpheme</button>
+            <button onclick="togglePage('word')">Add Word</button>
+            <button onclick="togglePage('morpheme', true)">Edit Morpheme</button>
+            <button onclick="togglePage('word', true)">Edit Word</button>
+        </div>
+
+        <div id="editMenu" style="display: none">
+            <h1 id="editHeader"></h1> <!-- What are you trying to edit -->
+            <select id="editSelector" style="margin: auto">
+                <option value=""></option>
+            </select>
         </div>
 
         <section id="morpheme" class="inputs">

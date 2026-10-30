@@ -11,12 +11,12 @@ main{
     gap: 40px;
 }
 
-section, #toggleButtons{
+section, #toggleButtons, #editMenu{
     background-color: hsl(0, 0%, 84%);
     padding: 20px;
 }
 
-section h1{
+section h1, #editMenu h1{
     font-size: 1.5rem;
     font-weight: normal;
     margin: auto;
@@ -42,6 +42,17 @@ section > input, .multipleInputs, section > select{
 
 #word{
     grid-template-columns: 1fr 1fr;
+}
+
+#editMenu{
+    flex-direction: column;
+    gap: 20px;
+}
+
+#editMenu select{
+    width: 250px;
+    height: 40px;
+    font-size: 18px;
 }
 
 .multipleInputs{
