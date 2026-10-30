@@ -8,19 +8,15 @@ main{
     padding: 20px;
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 40px;
 }
 
-section{
-    border: 1px solid red;
+section, #toggleButtons{
+    background-color: hsl(0, 0%, 84%);
+    padding: 20px;
 }
 
-#morpheme{
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-}
-
-#morpheme h1{
+section h1{
     font-size: 1.5rem;
     font-weight: normal;
     margin: auto;
@@ -28,18 +24,34 @@ section{
     width: 70%;
 }
 
-#morpheme > input{
+section > input, .multipleInputs, section > select{
     margin-bottom: 30px;
 }
 
-#addMeanings{
+#toggleButtons{
+    width: 80%;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+#morpheme{
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+#word{
+    grid-template-columns: 1fr 1fr;
+}
+
+.multipleInputs{
     grid-column-start: 1;
-    grid-column-end: 4;
+    grid-column-end: -1;
     display: grid;
     grid-template-columns: 4fr 1fr;
 }
 
-#addMeanings h1, #addMeaningReference, #submitMorpheme{
+.multipleButtons h1, .multipleInputs h1, .submitButton, .addAnother{
     grid-column-start: 1;
     grid-column-end: -1;
 }

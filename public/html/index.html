@@ -9,14 +9,14 @@
 <body>
     
     <main>
-        <h1>Welcome to the language builder!</h1>
-        
-        <section>
+        <h1 style="margin: auto">Welcome to the language builder!</h1>
+
+        <div id="toggleButtons">
             <button onclick="toggleSubmissionDiv('morpheme')">Add Morpheme</button>
             <button onclick="toggleSubmissionDiv('word')">Add Word</button>
             <button onclick="toggleSubmissionDiv('eMorpheme')">Edit Morpheme</button>
-            <button onclick="toggleSubmissionDiv('word')">Edit Word</button>
-        </section>
+            <button onclick="toggleSubmissionDiv('eWord')">Edit Word</button>
+        </div>
 
         <section id="morpheme" class="inputs">
             <h1>What is the morpheme?</h1>
@@ -31,44 +31,61 @@
             <input id="meaning" placeholder="Meaning">
             <input id="inspiration_language" placeholder="Inspiration Language">
             <input id="derived_from" placeholder="Derived From">
-            <div id="addMeanings">
+            <div class="multipleInputs">
                 <h1>Input the real world meaning(s) of this morpheme</h1>
                 <input placeholder="Meaning">
-                <button onclick="removeMeaning(this)">x</button>
-                <button onclick="addMeaning()" id="addMeaningReference">+ Add another entry</button>
+                <button onclick="removeOption(this)">x</button>
+                <button onclick="addOption('Meaning', this)" class="addAnother">+ Add another meaning</button>
             </div>
-            <button id="submitMorpheme" onclick="submitMorpheme()">Submit</button>
+            <button onclick="submitMorpheme(this)" class="submitButton">Submit</button>
         </section>
 
         <section id="word" class="inputs">
-            <input id="word" placeholder="Word">
-            <select>
+            <h1>What is the word?</h1>
+            <h1>What is the word's structure?</h1>
+            <input id="wordInput" placeholder="Word">
+            <select id="structure">
+                <option value=""></option>
                 <option value="simplex">Simplex</option>
                 <option value="complex">Complex</option>
                 <option value="compound">Compound</option>
             </select>
-            <select>
+            <h1>What class does the word fit into?</h1>
+            <h1>What function does the word serve?</h1>
+            <select id="class">
                 <option value="noun">Noun</option>
                 <option value="verb">Verb</option>
                 <option value="adjective">Adjective</option>
             </select>
-            <select>
-                <option value="personal name">Personal name</option>
-                <option value="family name">Family name</option>
-                <option value="group name">Group name</option>
-                <option value="place name">Place name</option>
+            <select id="function">
+                <option value=""></option>
+                <option value="name">Name</option>
                 <option value="title">Title</option>
-                <option value="artifact name">Artifact name</option>
             </select>
-            <div>
-                <p>List meaning(s)</p>
-                <input placeholder="Meaning">
-                <button onclick="removeMeaning(this)">x</button>
-                <button onclick="addMeaning()" id="addMeaningReference">+ Add another entry</button>
+            <div class="multipleInputs">
+                <h1>List included morpheme(s)</h1>
+                <input placeholder="Morpheme" list="morphemeList">
+                <button onclick="removeOption(this)">x</button>
+                <button onclick="addOption('Morpheme', this)" class="addAnother">+ Add another morpheme</button>
             </div>
+            <div class="multipleInputs">
+                <h1>What does the word mean / describe?</h1>
+                <input placeholder="Meaning">
+                <button onclick="removeOption(this)">x</button>
+                <button onclick="addOption('Meaning', this)" class="addAnother">+ Add another meaning</button>
+            </div>
+            <button onclick="submitWord()" class="submitButton">Submit</button>
         </section>
 
     </main>
+
+    <datalist id="morphemeList">
+        <option value="">
+    </datalist>
+
+    <datalist id="wordList">
+        <option value="">
+    </datalist>
 
 
     <script src="../js/index.js"></script>
