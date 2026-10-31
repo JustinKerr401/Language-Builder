@@ -34,7 +34,7 @@ $("#editSelector").on("change", function () {
 // Fill a section out with the database's info about said value
 async function setEditSection(){
         // Get corresponding value from database
-        const collection = editHeader.textContent.split(" ")[1]
+        const collection = editHeader.textContent.split(" ")[1] + "s"
         const filter = collection.slice(0, -1)
         const value = editSelector.value
         const response = await fetch(`/data?collection=${collection}&filter=${filter}:${value}`)
@@ -117,33 +117,45 @@ function clearMultipleInputs(specificDiv, placeholder){
 
 // Toggles which pop up menu appears
 function togglePage(variant, edit){ 
-    // Toggle off edit
-    if (edit && editHeader.textContent.split(" ")[1] == variant) {
+    let show = false
+        // Seperate paths based on if adding or editing
+    // Adding
+    if (!edit){
+        // If section is already visible
+        if (document.getElementById(variant).style.display == "none") show = true
+        // Hide sections + editing pane
+        hideSections()
         editMenu.style.display = "none"
         editHeader.textContent = ""
-    }// Toggle on edit
-    else if (edit){
-        hideSections()
-        editMenu.style.display = "flex"
-        const datalistName = `${variant}List`
-        document.querySelector("#editMenu h1").textContent = `What ${variant} are you trying to edit?`
-        editSelector.innerHTML = ""
-        document.getElementById(datalistName).querySelectorAll("option").forEach(option => {
-            const newOption = document.createElement("option")
-            newOption.value = option.value
-            newOption.textContent = option.value
-            editSelector.append(newOption)
-        })
-    }// Toggle off sections
-    else if (!edit && document.getElementById(variant).style.display == "grid"){
-        hideSections()
-    }// Toggle on A section, depending on which is passed into method
-    else if (!edit && document.getElementById(variant).style.display == "none"){
+        fillSection(variant, {})
+        // Show section if necessary
+        if (show) document.getElementById(variant).style.display = "grid"
+    }
+    // Editing
+    else {
+        // Show the editing pane if it isn't already open
+        if (editHeader.textContent.split(" ")[1] != variant) show = true
+        // Hide sections + editing pane
         hideSections()
         editMenu.style.display = "none"
-        fillSection(variant, {})
-        document.getElementById(variant).style.display = "grid"
+        editHeader.textContent = ""
+        // Show editing pane if necessary
+        if (show) {
+            editMenu.style.display = "flex"
+            // Set header to proper variant
+            document.querySelector("#editMenu h1").textContent = `What ${variant.slice(0, -1)} are you trying to edit?`
+            // Set the datalist the drop down draws from
+            const datalistName = `${variant}List`
+            editSelector.innerHTML = ""
+            document.getElementById(datalistName).querySelectorAll("option").forEach(option => {
+                const newOption = document.createElement("option")
+                newOption.value = option.value
+                newOption.textContent = option.value
+                editSelector.append(newOption)
+            })
+        }
     }
+    show = false
 }
 
 // Get all the keys from any given collection | Get all the "words" from "words", no other fields
