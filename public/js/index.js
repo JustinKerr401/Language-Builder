@@ -1,8 +1,7 @@
 // Startup methods
 hideSections()
-getCollectionKeys("morphemes")
-getCollectionKeys("words")
 $("#editSelector").select2()
+getKeys()
 
 // Editing menu items
 const editMenu = document.getElementById("editMenu") 
@@ -10,6 +9,12 @@ const editHeader = document.getElementById("editHeader")
 const editSelector = document.getElementById("editSelector") 
 
 // ------------------------------ Page maintenance ------------------------------
+
+async function getKeys(){
+    getCollectionKeys("morphemes")
+    getCollectionKeys("words")
+    getCollectionKeys("languages")
+}
 
 // Hides all <section> items
 function hideSections(){
@@ -46,7 +51,7 @@ function fillSection(section, values){
         case "morphemes":
             // Set all values
             document.getElementById("morphemeInput").value = values.morpheme !== undefined ? values.morpheme : ""
-            document.getElementById("language").value = values.language !== undefined ? values.language : ""
+            document.getElementById("languageInputMorpheme").value = values.language !== undefined ? values.language : ""
             document.getElementById("derives").value = values.derives !== undefined ? values.derives : ""
             document.getElementById("meaning").value = values.meaning !== undefined ? values.meaning : ""
             document.getElementById("inspiration_language").value = values.inspiration_language !== undefined ? values.inspiration_language : ""
@@ -67,6 +72,7 @@ function fillSection(section, values){
         case "words":
             // Set all values
             document.getElementById("wordInput").value = values.word !== undefined ? values.word : ""
+            document.getElementById("languageInputWord").value = values.language !== undefined ? values.language : ""
             document.getElementById("structure").value = values.structure !== undefined ? values.structure : ""
             document.getElementById("class").value = values.class !== undefined ? values.class : ""
             document.getElementById("function").value = values.function !== undefined ? values.function : ""
@@ -93,6 +99,11 @@ function fillSection(section, values){
                 })
             }
             
+            break
+        case "languages":
+            document.getElementById("languageInput").value = editMenu.style.display == "flex" ? editSelector.value : ""
+            document.getElementById("parent").value = values?.parent !== undefined ? values.parent : ""
+            document.getElementById("relationship").value = values?.relationship !== undefined ? values.relationship : ""
             break
     }document.getElementById(section).style.display = "grid"
 }
@@ -129,8 +140,8 @@ function togglePage(variant, edit){
     }// Toggle on A section, depending on which is passed into method
     else if (!edit && document.getElementById(variant).style.display == "none"){
         hideSections()
-        fillSection(variant, {})
         editMenu.style.display = "none"
+        fillSection(variant, {})
         document.getElementById(variant).style.display = "grid"
     }
 }
@@ -139,18 +150,20 @@ function togglePage(variant, edit){
 async function getCollectionKeys(collection){
     // Call database for data
     const key = collection.slice(0, -1)
-    const response = await fetch(`/data?collection=${collection}&fields=${key}`)
+    const response = collection == "languages" ? await fetch(`/data?collection=${collection}&fields=${key},parent`) : await fetch(`/data?collection=${collection}&fields=${key}`)
     if (!response.ok) throw new Error(`Failed to fetch list of ${collection}`)
     const collectionItems = await response.json()
     // Put all those keys into an array and sort the array
     let list = []
     collectionItems.forEach(value => {
         list.push(value[key])
+        if (collection == "languages") list.push(value.parent)
     })
-    // Sort the data alphabetically
+    // Sort the data alphabetically and remove duplicates (parent languages)
     list.sort()
+    const fixedList = [...new Set(list)]
     // Put the sorted values into a dataset for later reference
-    list.forEach(item => {
+    fixedList.forEach(item => {
         const option = document.createElement("option")
         option.value = item
         document.getElementById(`${collection}List`).appendChild(option)
@@ -163,7 +176,8 @@ async function getCollectionKeys(collection){
 function addOption(specific, reference, fillerValue){
     const newOption = document.createElement("input")
     newOption.placeholder = specific
-    if (specific == "Morpheme") newOption.list = "morphemeList"
+    const properList = `${specific.toLowerCase()}sList`
+    newOption.setAttribute("list", properList)
     if (fillerValue) newOption.value = fillerValue
     const newDelete = document.createElement("button")
     newDelete.textContent = "x"
@@ -241,6 +255,7 @@ async function submitWord(){
 
     const wordSave = {
         word: document.getElementById("wordInput").value.toLowerCase(),
+        language: document.getElementById("languageInputWord").value.toLowerCase(),
         structure: document.getElementById("structure").value.toLowerCase(),
         class: document.getElementById("class").value.toLowerCase(),
         function: document.getElementById("function").value.toLowerCase(),
@@ -255,6 +270,43 @@ async function submitWord(){
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(wordSave)
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+            console.log("Word saved:", result);
+
+            alert("Word saved successfully!");
+            window.location.reload();
+        } else {
+            console.error("Error:", result);
+
+            alert("Failed to save word.");
+        }
+
+    } catch (error) {
+        console.error("Request failed:", error);
+
+        alert("Could not connect to the server.");
+    }
+}
+
+// Submit the created word
+async function submitLanguage(){
+    const languageSave = {
+        language: document.getElementById("languageInput").value.toLowerCase(),
+        parent: document.getElementById("parent").value.toLowerCase(),
+        relationship: document.getElementById("relationship").value
+    }
+
+    try {
+        const response = await fetch("/save?languages", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(languageSave)
         });
 
         const result = await response.json();

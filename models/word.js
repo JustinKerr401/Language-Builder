@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const wordSchema = new mongoose.Schema({
     word: { type: String, required: true },
+    language: { type: String },
     structure: { type: String },
     derives: { type: String },
     class: { type: String },

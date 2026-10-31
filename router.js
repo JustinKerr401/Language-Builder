@@ -4,6 +4,7 @@ const path = require("path");
 
 const Morpheme = require('./models/morpheme')
 const Word = require('./models/word')
+const Language = require('./models/language')
 
 const router = express.Router();
 
@@ -40,6 +41,9 @@ router.get("/data", async (req, res) => {
             case "words":
                 data = data = await Word.find(filterObject).select(`${fieldsString} -_id`)
                 break
+            case "languages":
+                data = data = await Language.find(filterObject).select(`${fieldsString} -_id`)
+                break
         }
 
         // Return data
@@ -74,6 +78,11 @@ router.post("/save", async (req, res) => {
                 Model = Word;
                 key = "word";
                 break;
+            
+            case "languages":
+                Model = Language;
+                key = "language";
+                break
 
             default:
                 return res.status(400).json({

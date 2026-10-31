@@ -41,7 +41,11 @@ section > input, .multipleInputs, section > select{
 }
 
 #words{
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+#languages{
+    grid-template-columns: 1fr 1fr 1fr;
 }
 
 #editMenu{
