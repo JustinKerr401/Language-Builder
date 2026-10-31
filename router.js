@@ -54,35 +54,62 @@ router.get("/data", async (req, res) => {
 
 // Save any saved value
 router.post("/save", async (req, res) => {
-    //      /data?collection=morphemes
     try {
         // Identify collection to save to
         const collection = Object.keys(req.query)[0];
+
         // Store the data
         const data = req.body;
-        let value = ""
 
-        switch (collection){
+        let Model;
+        let key;
+
+        switch (collection) {
             case "morphemes":
-                value = new Morpheme(data)
-                break
+                Model = Morpheme;
+                key = "morpheme";
+                break;
+
             case "words":
-                value = new Word(data)
-                break
+                Model = Word;
+                key = "word";
+                break;
+
+            default:
+                return res.status(400).json({
+                    message: "Invalid collection"
+                });
         }
 
-        await value.save()
+            // NOT MY CODE: CHATGPT ADDITION
+        // Ensure the unique key exists
+        if (data[key] === undefined) {
+            return res.status(400).json({
+                message: `Missing required field: ${key}`
+            });
+        }
 
-        res.status(201).json({
-            message: "Morpheme saved successfully!",
+        // Insert if new, replace if existing
+        const value = await Model.findOneAndReplace(
+            { [key]: data[key] },
+            data,
+            {
+                upsert: true,
+                returnDocument: 'after',
+                runValidators: true
+            }
+        );
+
+        res.status(200).json({
+            message: `${collection} saved successfully!`,
             value: value
         });
 
     } catch (error) {
-        console.error("Error saving morpheme:", error);
+        console.error("Error saving document:", error);
 
         res.status(500).json({
-            message: "Error saving morpheme",
+            message: "Error saving document",
             error: error.message
         });
     }

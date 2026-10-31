@@ -1,13 +1,13 @@
-// Editing menu items
-const editMenu = document.getElementById("editMenu") 
-const editHeader = document.getElementById("editHeader")
-const editSelector = document.getElementById("editSelector") 
-
 // Startup methods
 hideSections()
 getCollectionKeys("morphemes")
 getCollectionKeys("words")
 $("#editSelector").select2()
+
+// Editing menu items
+const editMenu = document.getElementById("editMenu") 
+const editHeader = document.getElementById("editHeader")
+const editSelector = document.getElementById("editSelector") 
 
 // ------------------------------ Page maintenance ------------------------------
 
@@ -20,9 +20,11 @@ function hideSections(){
 }
 
 // Edit any given value (morpheme, word, etc) if one is selected
-editSelector.addEventListener("change", () => {
-    if (editSelector.value !== "") setEditSection()
-})
+$("#editSelector").on("change", function () {
+    if (this.value !== "") {
+        setEditSection();
+    }
+});
 
 // Fill a section out with the database's info about said value
 async function setEditSection(){
