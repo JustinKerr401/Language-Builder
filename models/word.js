@@ -6,8 +6,8 @@ const wordSchema = new mongoose.Schema({
     derives: { type: String },
     class: { type: String },
     function: { type: String },
-    morphemes: { type: mongoose.Schema.Types.Mixed },
-    meaning: { type: mongoose.Schema.Types.Mixed }
+    morphemes: { type: [String], default: [] },
+    meaning: { type: [String], default: [] }
 });
 
 module.exports = mongoose.model("Word", wordSchema, "words");

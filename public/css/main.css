@@ -32,21 +32,22 @@ section > input, .multipleInputs, section > select{
     width: 80%;
     margin: auto;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr;
     gap: 20px;
 }
 
-#morpheme{
+#morphemes{
     grid-template-columns: 1fr 1fr 1fr;
 }
 
-#word{
+#words{
     grid-template-columns: 1fr 1fr;
 }
 
 #editMenu{
     flex-direction: column;
     gap: 20px;
+    align-items: center;
 }
 
 #editMenu select{

@@ -12,10 +12,12 @@
         <h1 style="margin: auto">Welcome to the language builder!</h1>
 
         <div id="toggleButtons">
-            <button onclick="togglePage('morpheme')">Add Morpheme</button>
-            <button onclick="togglePage('word')">Add Word</button>
-            <button onclick="togglePage('morpheme', true)">Edit Morpheme</button>
-            <button onclick="togglePage('word', true)">Edit Word</button>
+            <button onclick="togglePage('morphemes')">Add Morpheme</button>
+            <button onclick="togglePage('words')">Add Word</button>
+            <button onclick="togglePage('languages')" disabled>Add Language</button>
+            <button onclick="togglePage('morphemes', true)">Edit Morpheme</button>
+            <button onclick="togglePage('words', true)">Edit Word</button>
+            <button onclick="togglePage('languages', true)" disabled>Edit Language</button>
         </div>
 
         <div id="editMenu" style="display: none">
@@ -25,7 +27,7 @@
             </select>
         </div>
 
-        <section id="morpheme" class="inputs">
+        <section id="morphemes" class="inputs">
             <h1>What is the morpheme?</h1>
             <h1>What language does this belong to?</h1>
             <h1>What morpheme does this one derive from?</h1>
@@ -47,7 +49,7 @@
             <button onclick="submitMorpheme(this)" class="submitButton">Submit</button>
         </section>
 
-        <section id="word" class="inputs">
+        <section id="words" class="inputs">
             <h1>What is the word?</h1>
             <h1>What is the word's structure?</h1>
             <input id="wordInput" placeholder="Word">
@@ -86,15 +88,19 @@
 
     </main>
 
-    <datalist id="morphemeList">
+    <datalist id="morphemesList">
         <option value="">
     </datalist>
 
-    <datalist id="wordList">
+    <datalist id="wordsList">
         <option value="">
     </datalist>
 
-
+    <!-- Select2 stuffs -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- My script :) -->
     <script src="../js/index.js"></script>
 </body>
 </html>

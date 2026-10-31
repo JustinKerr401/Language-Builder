@@ -13,27 +13,36 @@ router.get("/", (req, res) => {
 });
 
 // ------------------------------ Pulling from database ------------------------------
-// Specifically, for any given collection, only either the keys or everything per document
 
+// Fully functional query for database
 router.get("/data", async (req, res) => {
+    //      /data?collection=morphemes&fields=morpheme,meaning&filter=language:Latin,inspiration_language:Greek
     try {
-        const { type } = req.query
+        // Variable to return
         let data;
-
-        switch (type){
+        // Break down query
+        const { collection, fields, filter } = req.query
+        // Get values for fields and filter if they exist
+        let fieldsString = ""
+        if (fields) fieldsString = fields.split(",").join(" ")
+        const filterObject = {}
+        if (filter){
+            filter.split(",").forEach(condition => {
+                const [field, value] = condition.split(":")
+                filterObject[field] = value
+            })
+        }
+        // Execute query, different models for each
+        switch (collection){
             case "morphemes":
-                data = await Morpheme.find();
-                break
-            case "morphemes-list":
-                data = await Morpheme.find().select("morpheme -_id")
+                data = await Morpheme.find(filterObject).select(`${fieldsString} -_id`)
                 break
             case "words":
-                data = await Word.find()
-                break;
-            case "words-list":
-                data = await Word.find().select("word -_id")
+                data = data = await Word.find(filterObject).select(`${fieldsString} -_id`)
                 break
         }
+
+        // Return data
         res.json(data)
         
     } catch {
@@ -43,18 +52,30 @@ router.get("/data", async (req, res) => {
 
 // ------------------------------ Saving to database ------------------------------
 
-// Save a morpheme
-router.post("/save-morpheme", async (req, res) => {
+// Save any saved value
+router.post("/save", async (req, res) => {
+    //      /data?collection=morphemes
     try {
-        const morphemeData = req.body;
+        // Identify collection to save to
+        const collection = Object.keys(req.query)[0];
+        // Store the data
+        const data = req.body;
+        let value = ""
 
-        const newMorpheme = new Morpheme(morphemeData);
+        switch (collection){
+            case "morphemes":
+                value = new Morpheme(data)
+                break
+            case "words":
+                value = new Word(data)
+                break
+        }
 
-        await newMorpheme.save();
+        await value.save()
 
         res.status(201).json({
             message: "Morpheme saved successfully!",
-            morpheme: newMorpheme
+            value: value
         });
 
     } catch (error) {
@@ -62,30 +83,6 @@ router.post("/save-morpheme", async (req, res) => {
 
         res.status(500).json({
             message: "Error saving morpheme",
-            error: error.message
-        });
-    }
-});
-
-// Save a word
-router.post("/save-word", async (req, res) => {
-    try {
-        const wordData = req.body;
-
-        const newWord = new Word(wordData);
-
-        await newWord.save();
-
-        res.status(201).json({
-            message: "Word saved successfully!",
-            word: newWord
-        });
-
-    } catch (error) {
-        console.error("Error saving word:", error);
-
-        res.status(500).json({
-            message: "Error saving word",
             error: error.message
         });
     }
