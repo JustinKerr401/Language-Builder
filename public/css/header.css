@@ -1,0 +1,9 @@
+header{
+    background-color: white;
+    position: sticky;
+    top: 0px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}

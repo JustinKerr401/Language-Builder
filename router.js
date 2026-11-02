@@ -13,6 +13,11 @@ router.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "index.html"));
 });
 
+// Serve the table page
+router.get("/table", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "table.html"));
+});
+
 // ------------------------------ Pulling from database ------------------------------
 
 // Fully functional query for database

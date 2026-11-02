@@ -216,11 +216,11 @@ async function submitMorpheme(button){
     
     const morphemeSave = {
         morpheme: document.getElementById("morphemeInput").value.toLowerCase(),
-        language: document.getElementById("language").value.toLowerCase(),
-        derives: document.getElementById("derives").value.toLowerCase(),
-        meaning: document.getElementById("meaning").value.toLowerCase(),
-        inspiration_language: document.getElementById("inspiration_language").value.toLowerCase(),
-        derived_from: document.getElementById("derived_from").value.toLowerCase(),
+        language: (document.getElementById("language")?.value ?? "").toLowerCase(),
+        derives: (document.getElementById("derives")?.value ?? "").toLowerCase(),
+        meaning: (document.getElementById("meaning")?.value ?? "").toLowerCase(),
+        inspiration_language: (document.getElementById("inspiration_language")?.value ?? "").toLowerCase(),
+        derived_from: (document.getElementById("derived_from")?.value ?? "").toLowerCase(),
         real_meaning: meaningsArray
     }
 
