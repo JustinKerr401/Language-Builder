@@ -38,6 +38,7 @@ async function buildTable(button){
         })
         document.querySelector("table tbody").appendChild(row)
     })
+    sortTable(0)
 }
 
     // Sort the table
