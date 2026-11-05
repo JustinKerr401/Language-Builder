@@ -112,6 +112,7 @@ router.post("/save", async (req, res) => {
     try {
         // Identify collection to save to
         const collection = Object.keys(req.query)[0];
+        console.log(collection)
 
         // Store the data
         const data = req.body;
@@ -120,6 +121,11 @@ router.post("/save", async (req, res) => {
         let key;
 
         switch (collection) {
+            case "phonemes":
+                Model = Phoneme;
+                key = "phoneme";
+                break;
+            
             case "morphemes":
                 Model = Morpheme;
                 key = "morpheme";
