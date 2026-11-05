@@ -2,11 +2,14 @@
 const express = require("express");
 const path = require("path");
 
+const Phoneme = require('./models/phoneme')
 const Morpheme = require('./models/morpheme')
 const Word = require('./models/word')
 const Language = require('./models/language')
 
 const router = express.Router();
+
+// ------------------------------ Serving pages ------------------------------
 
 // Serve the home page
 router.get("/", (req, res) => {
@@ -19,6 +22,49 @@ router.get("/table", (req, res) => {
 });
 
 // ------------------------------ Pulling from database ------------------------------
+
+// Get the schema for a collection
+router.get("/getSchema", (req, res) => {
+    //  /getSchema?collection=
+
+    let model;
+    switch (req.query.collection) {
+        case "phonemes":
+            model = Phoneme;
+            break
+        case "words":
+            model = Word;
+            break;
+        case "languages":
+            model = Language;
+            break;
+        case "morphemes":
+            model = Morpheme;
+            break;
+        default:
+            return res.status(400).json({
+                error: "Invalid collection"
+            });
+    }
+
+    const schema = {};
+
+    Object.entries(model.schema.paths).forEach(([name, path]) => {
+        if (["_id", "__v"].includes(name)) return;
+
+        schema[name] = {
+            type: path.instance,
+            required: path.isRequired,
+            default: path.defaultValue
+        };
+
+        if (path.instance === "Array") {
+            schema[name].elementType = path.caster?.instance;
+        }
+    });
+
+    res.json(schema);
+});
 
 // Fully functional query for database
 router.get("/data", async (req, res) => {

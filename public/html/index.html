@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Welcome to language builder!</title>
     <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/index.css">
 </head>
 <body>
     
@@ -12,12 +13,10 @@
         <h1 style="margin: auto">Welcome to the language builder!</h1>
 
         <div id="toggleButtons">
-            <button onclick="togglePage('morphemes')">Add Morpheme</button>
-            <button onclick="togglePage('words')">Add Word</button>
-            <button onclick="togglePage('languages')">Add Language</button>
-            <button onclick="togglePage('morphemes', true)">Edit Morpheme</button>
-            <button onclick="togglePage('words', true)">Edit Word</button>
-            <button onclick="togglePage('languages', true)">Edit Language</button>
+            <button onclick="showUser('phonemes')">Add Phoneme</button>
+            <button onclick="showUser('morphemes')">Add Morpheme</button>
+            <button onclick="showUser('phonemes', true)">Edit Phoneme</button>
+            <button onclick="showUser('morphemes', true)">Edit Morpheme</button>
         </div>
 
         <div id="editMenu" style="display: none">
@@ -27,91 +26,13 @@
             </select>
         </div>
 
-            <!-- Sections (for editing) -->
-        <section id="morphemes" class="inputs">
-            <h1>What is the morpheme?</h1>
-            <h1>What language does this belong to?</h1>
-            <h1>What morpheme does this one derive from?</h1>
-            <input id="morphemeInput" placeholder="Morpheme">
-            <input id="languageInputMorpheme" placeholder="Language" list="languagesList">
-            <input id="derives" placeholder="Derives">
-            <h1>What does the morpheme mean?</h1>
-            <h1>What real world language does this comes from?</h1>
-            <h1>What real morpheme does this derive from?</h1>
-            <input id="meaning" placeholder="Meaning">
-            <input id="inspiration_language" placeholder="Inspiration Language">
-            <input id="derived_from" placeholder="Derived From">
-            <div class="multipleInputs">
-                <h1>Input the real world meaning(s) of this morpheme</h1>
-                <button onclick="addOption('Meaning', this)" class="addAnother">+ Add another meaning</button>
-            </div>
-            <button onclick="submitMorpheme(this)" class="submitButton">Submit</button>
+        <section id="toBeFilled" style="display: none">
+
         </section>
 
-        <section id="words" class="inputs">
-            <h1>What is the word?</h1>
-            <h1>What language does the word belong to?</h1>
-            <h1>What is the word's structure?</h1>
-            <input id="wordInput" placeholder="Word">
-            <input id="languageInputWord" placeholder="Language" list="languagesList">
-            <select id="structure">
-                <option value=""></option>
-                <option value="simplex">Simplex</option>
-                <option value="complex">Complex</option>
-                <option value="compound">Compound</option>
-            </select>
-            <h1>What class does the word fit into?</h1>
-            <p></p>
-            <h1>What function does the word serve?</h1>
-            <select id="class">
-                <option value="noun">Noun</option>
-                <option value="verb">Verb</option>
-                <option value="adjective">Adjective</option>
-            </select>
-            <p></p>
-            <select id="function">
-                <option value=""></option>
-                <option value="name">Name</option>
-                <option value="title">Title</option>
-            </select>
-            <div class="multipleInputs">
-                <h1>List included morpheme(s)</h1>
-                <button onclick="addOption('Morpheme', this)" class="addAnother">+ Add another morpheme</button>
-            </div>
-            <div class="multipleInputs">
-                <h1>What does the word mean / describe?</h1>
-                <button onclick="addOption('Meaning', this)" class="addAnother">+ Add another meaning</button>
-            </div>
-            <button onclick="submitWord()" class="submitButton">Submit</button>
-        </section>
-
-        <section id="languages" class="inputs">
-            <h1>What is the language?</h1>
-            <h1>Does this language decend from a parent?</h1>
-            <h1>What is the relationship with the parent?</h1>
-            <input id="languageInput" placeholder="Language">
-            <input id="parent" placeholder="Parent Language" list="languagesList">
-            <select id="relationship">
-                <option value="daughter">Daughter</option>
-                <option value="dialect">Dialect</option>
-            </select>
-            <button onclick="submitLanguage(this)" class="submitButton">Submit</button>
-        </section>
+        
 
     </main>
-
-        <!-- Datalists -->
-    <datalist id="morphemesList">
-        <option value="">
-    </datalist>
-
-    <datalist id="wordsList">
-        <option value="">
-    </datalist>
-
-    <datalist id="languagesList">
-        <option value="">
-    </datalist>
 
         <!-- Scripts -->
     <!-- Select2 stuffs -->

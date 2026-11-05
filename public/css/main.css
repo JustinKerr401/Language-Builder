@@ -11,63 +11,7 @@ main{
     gap: 40px;
 }
 
-section, #toggleButtons, #editMenu{
+section{
     background-color: hsl(0, 0%, 84%);
     padding: 20px;
-}
-
-section h1, #editMenu h1{
-    font-size: 1.5rem;
-    font-weight: normal;
-    margin: auto;
-    text-align: center;
-    width: 70%;
-}
-
-section > input, .multipleInputs, section > select{
-    margin-bottom: 30px;
-}
-
-#toggleButtons{
-    width: 80%;
-    margin: auto;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 20px;
-}
-
-#morphemes{
-    grid-template-columns: 1fr 1fr 1fr;
-}
-
-#words{
-    grid-template-columns: 1fr 1fr 1fr;
-}
-
-#languages{
-    grid-template-columns: 1fr 1fr 1fr;
-}
-
-#editMenu{
-    flex-direction: column;
-    gap: 20px;
-    align-items: center;
-}
-
-#editMenu select{
-    width: 250px;
-    height: 40px;
-    font-size: 18px;
-}
-
-.multipleInputs{
-    grid-column-start: 1;
-    grid-column-end: -1;
-    display: grid;
-    grid-template-columns: 4fr 1fr;
-}
-
-.multipleButtons h1, .multipleInputs h1, .submitButton, .addAnother{
-    grid-column-start: 1;
-    grid-column-end: -1;
 }
