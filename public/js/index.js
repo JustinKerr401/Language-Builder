@@ -4,37 +4,92 @@
 // Holding variables
 let attributeNumber = 0
 
+// Make a select item nice
+$("#editSelector").select2()
+
 // Relevant DOM elements
 const section = document.getElementById("toBeFilled")
 const editMenu = document.getElementById("editMenu") 
 const editHeader = document.getElementById("editHeader")
 const editSelector = document.getElementById("editSelector")
 
+// ------------------------------ Event listeners ------------------------------
+
+// Edit any given value (morpheme, word, etc) if one is selected
+$("#editSelector").on("change", async function () {
+    if (this.value !== "") {
+        const key = editHeader.textContent.split(" ")[1]
+        const collection = key + "s"
+        showUser(collection)
+        const pull = await fetch(`/data?collection=${collection}&filter=${key}:${editSelector.value}`)
+        if (!pull.ok) throw new Error(`Failed to fetch ${editSelector.value} data`)
+        const multiple = await pull.json()
+        const document = multiple[0]
+        fillSection(document)
+    }
+});
+
 // ------------------------------ Functions ------------------------------
 
 // User clicks a button (either add or edit a given value)
 async function showUser(collection, edit){
-    let show = false
+    let show = true
+    const sectionHeader = section.querySelector("h1")
 
     // Add button
     if (!edit){
+        if (sectionHeader?.textContent == collection) show = false
+        // Hide stuffs
+        editMenu.style.display = "none"
+        editHeader.textContent = ""
+        section.style.display = "none"
+        section.innerHTML = ""
+        // Get collection schema to build proper input system
         const pull = await fetch(`getSchema?collection=${collection}`)
         if (!pull.ok) throw new Error(`Failed to fetch schema for ${collection}`)
         const schema = await pull.json()
         const keys = Object.keys(schema)
         const values = Object.values(schema)
-        // Automatically fill the section with values
-        fillSection(keys, values, collection)
+        if (show) buildSection(keys, values, collection)
     }// Edit button
     else {
+        if (editHeader.textContent.split(" ")[1] == collection.slice(0, -1)) show = false
+        // Set up edit menu
         section.innerHTML = ""
         section.style.display = "none"
-        editMenu.style.display = 
+        editHeader.textContent = ""
+        editMenu.style.display = "none"
+        if (show){
+            editMenu.style.display = "flex"
+            editHeader.textContent = `What ${collection.slice(0, -1)} are you trying to edit?`
+            editSelector.innerHTML = `<option value=""></option>`
+                // Set up data selector
+            const key = collection.slice(0, -1)
+            const response = collection == "languages" ? await fetch(`/data?collection=${collection}&fields=${key},parent`) : await fetch(`/data?collection=${collection}&fields=${key}`)
+            if (!response.ok) throw new Error(`Failed to fetch list of ${collection}`)
+            const collectionItems = await response.json()
+            // Put all those keys into an array and sort the array
+            let list = []
+            collectionItems.forEach(value => {
+                list.push(value[key])
+                if (collection == "languages") list.push(value.parent)
+            })
+            // Sort the data alphabetically and remove duplicates (parent languages)
+            list.sort()
+            const fixedList = [...new Set(list)]
+            // Put the sorted values into a dataset
+            fixedList.forEach(item => {
+                const option = document.createElement("option")
+                option.value = item
+                option.textContent = item
+                editSelector.appendChild(option)
+            })
+        }
     }
     
 }
 
-function fillSection(keys, values, collection){
+function buildSection(keys, values, collection){
     section.innerHTML = ""
     const sectionHeader = document.createElement("h1")
     sectionHeader.style.gridColumnStart = "1"
@@ -76,6 +131,7 @@ function fillSection(keys, values, collection){
                 addOptionButton.textContent = `+ another ${keys[index]}`
                 addOptionButton.style.gridColumnStart = "1"
                 addOptionButton.style.gridColumnEnd = "-1"
+                addOptionButton.classList.add("addAnother")
                 // Inserting into dom
                 input.appendChild(header)
                 input.appendChild(addOptionButton)
@@ -99,7 +155,7 @@ function fillSection(keys, values, collection){
     section.style.display = "grid"
 }
 
-function addOption(placeholder, buttonReference){
+function addOption(placeholder, buttonReference, filler){
     const input = document.createElement("input")
     const button = document.createElement("button")
     // input properties
@@ -107,6 +163,9 @@ function addOption(placeholder, buttonReference){
     // button properties
     button.onclick = () => removeOption(button);
     button.textContent = "x"
+    button.classList.add("deleteButton")
+    // add filler data
+    if (filler !== undefined) input.value = filler
     // append
     buttonReference.parentElement.insertBefore(input, buttonReference)
     buttonReference.parentElement.insertBefore(button, buttonReference)
@@ -118,6 +177,42 @@ function removeOption(button){
     button.remove()
 }
 
+// Fill a section with data from a document
+function fillSection(data){
+    const keys = Object.keys(data)
+    const values = Object.values(data)
+    // Iterate once for every pair in schema
+    let index = 0;
+    for (let x = 0; x<attributeNumber; x++) {
+        // Match the current key to a matching header 
+        const element = document.getElementById(x)
+        // Add into document differently depending on datatype
+        switch (element.tagName){
+            case "INPUT":
+                // Check if the current key matches the current attribute
+                if (element.previousElementSibling.textContent.slice(0, -1) == keys[index]){
+                    element.value = values[index]
+                    index++
+                } else {
+                    continue
+                }
+                break
+            case "DIV":
+                // Get rid of placeholder inputs
+                element.querySelectorAll(".deleteButton").forEach(button => {
+                    removeOption(button)
+                })
+                // Add data
+                values[index].forEach(value => {
+                    addOption(keys[index], element.querySelector(".addAnother"), value)
+                })
+                index++
+                break
+        }
+    }
+}
+
+// Save an item to a collection
 async function saveSection(){
     try {
         // Object to save

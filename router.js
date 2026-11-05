@@ -86,6 +86,9 @@ router.get("/data", async (req, res) => {
         }
         // Execute query, different models for each
         switch (collection){
+            case "phonemes":
+                data = await Phoneme.find(filterObject).select(`${fieldsString} -_id`)
+                break
             case "morphemes":
                 data = await Morpheme.find(filterObject).select(`${fieldsString} -_id`)
                 break

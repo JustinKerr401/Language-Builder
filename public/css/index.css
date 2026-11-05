@@ -17,3 +17,16 @@ main{
     grid-template-columns: 1fr 5fr 1fr 5fr;
     gap: 20px;
 }
+
+#editMenu{
+    background-color: hsl(0, 0%, 84%);
+    padding-bottom: 20px;
+    flex-direction: column;
+    align-items: center;
+}
+
+#editSelector{
+    width: 250px;
+    height: 40px;
+    font-size: 18px;
+}

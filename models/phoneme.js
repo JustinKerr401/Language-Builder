@@ -9,4 +9,4 @@ const phonemeSchema = new mongoose.Schema({
     voicing: { type: String }
 });
 
-module.exports = mongoose.model("Phoneme", phonemeSchema, "Phonemes");
+module.exports = mongoose.model("Phoneme", phonemeSchema, "phonemes");
