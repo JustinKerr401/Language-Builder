@@ -16,14 +16,22 @@ const editSelector = document.getElementById("editSelector")
 async function showUser(collection, edit){
     let show = false
 
-    // Add button(s)
-    const pull = await fetch(`getSchema?collection=${collection}`)
-    if (!pull.ok) throw new Error(`Failed to fetch schema for ${collection}`)
-    const schema = await pull.json()
-    const keys = Object.keys(schema)
-    const values = Object.values(schema)
-    // Automatically fill the section with values
-    fillSection(keys, values, collection)
+    // Add button
+    if (!edit){
+        const pull = await fetch(`getSchema?collection=${collection}`)
+        if (!pull.ok) throw new Error(`Failed to fetch schema for ${collection}`)
+        const schema = await pull.json()
+        const keys = Object.keys(schema)
+        const values = Object.values(schema)
+        // Automatically fill the section with values
+        fillSection(keys, values, collection)
+    }// Edit button
+    else {
+        section.innerHTML = ""
+        section.style.display = "none"
+        editMenu.style.display = 
+    }
+    
 }
 
 function fillSection(keys, values, collection){
