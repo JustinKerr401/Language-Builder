@@ -55,7 +55,8 @@ router.get("/getSchema", (req, res) => {
         schema[name] = {
             type: path.instance,
             required: path.isRequired,
-            default: path.defaultValue
+            default: path.defaultValue,
+            enum: path.enumValues?.length ? path.enumValues : undefined
         };
 
         if (path.instance === "Array") {

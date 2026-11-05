@@ -101,20 +101,35 @@ function buildSection(keys, values, collection){
     // Create one input for every field
     values.forEach((value, index) => {
         const header = document.createElement("h2")
-        const input = value.type == "String" ? document.createElement("input") :
-                      value.type == "Array" ? document.createElement("div") : 
-                      null
         // Append differently based on the input type
         header.textContent = `${keys[index]}:`
         switch (value.type){
             case "String":
-                input.id = index
-                input.placeholder = `Enter the ${keys[index]}`
+                // Choose an input or select based on provided enum values
                 section.appendChild(header)
-                section.appendChild(input)
+                // Input
+                if (value.enum == null){
+                    const input = document.createElement("input")
+                    input.id = index
+                    input.placeholder = `Enter the ${keys[index]}`
+                    section.appendChild(input)
+                }// Select
+                else {
+                    const input = document.createElement("select")
+                    input.id = index
+                    const enums = value.enum
+                    enums.forEach(choice => {
+                        const option = document.createElement("option")
+                        option.value = choice
+                        option.textContent = choice
+                        input.appendChild(option)
+                    })
+                    section.appendChild(input)
+                }
                 break
             case "Array":
                 // Holding div properties
+                const input = document.createElement("div")
                 input.style.gridColumnStart = "1"
                 input.style.gridColumnEnd = "-1"
                 input.classList.add("multipleInputs")
@@ -197,15 +212,26 @@ function fillSection(data){
                     continue
                 }
                 break
+            case "SELECT":
+                if (element.previousElementSibling.textContent.slice(0, -1) == keys[index]){
+                    element.value = values[index]
+                    index++
+                } else {
+                    continue
+                }
+                break
             case "DIV":
-                // Get rid of placeholder inputs
-                element.querySelectorAll(".deleteButton").forEach(button => {
-                    removeOption(button)
-                })
-                // Add data
-                values[index].forEach(value => {
-                    addOption(keys[index], element.querySelector(".addAnother"), value)
-                })
+                // Only process if there is data to input
+                if (values[index].length > 0){
+                    // Get rid of placeholder inputs
+                    element.querySelectorAll(".deleteButton").forEach(button => {
+                        removeOption(button)
+                    })
+                    // Add data
+                    values[index].forEach(value => {
+                        addOption(keys[index], element.querySelector(".addAnother"), value)
+                    })
+                }
                 index++
                 break
         }
@@ -231,11 +257,20 @@ async function saveSection(){
                     if (x == 0 && inputElement.value == "") throw new Error(`${type} must have a value`)
                     jsonExport[type] = inputElement.value !== "" ? inputElement.value : ""
                     break
+                case "SELECT":
                 // Multiple inputs
+                    jsonExport[type] = inputElement.value !== "" ? inputElement.value : ""
+                    break
                 case "DIV":
+                    const type2 = inputElement.querySelector("h2").textContent.slice(0, -1)
+                    jsonExport[type2] = []
+                    inputElement.querySelectorAll("input").forEach(input => {
+                        if (input.value !== "") jsonExport[type2].push(input.value)
+                    })
                     break
             }
         }
+
         // Save to database
         const response = await fetch(`/save?${collection}`, {
             method: "POST",
