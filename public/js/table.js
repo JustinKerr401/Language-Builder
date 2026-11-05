@@ -32,13 +32,11 @@ async function buildTable(button){
     })
     // Iterate over each document in collection
     documents.forEach(data => {
-        console.log(data)
         const row = document.createElement("tr")
         // Add a cell for every attribute
-        data.forEach(attribute => {
-            console.log(attribute)
+        columns.forEach(attribute => {
             const cell = document.createElement("td")
-            cell.textContent = element[attribute]
+            cell.textContent = data[attribute]
             row.appendChild(cell)
         })
         document.querySelector("table tbody").appendChild(row)
