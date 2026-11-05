@@ -22,7 +22,8 @@ const phonemeSchema = new mongoose.Schema({
             "post alveolar",
             "retroflex",
             "velar",
-            "labial-velar"
+            "labial-velar",
+            "palato-alveolar"
         ]
     },
     manner: { 
@@ -41,7 +42,8 @@ const phonemeSchema = new mongoose.Schema({
             "tap or flap",
             "fricative",
             "lateral approximant",
-            "approximant"
+            "approximant",
+            "affricate"
         ] 
     },
     voicing: { 
