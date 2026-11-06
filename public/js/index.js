@@ -18,10 +18,12 @@ const editSelector = document.getElementById("editSelector")
 // Edit any given value (morpheme, word, etc) if one is selected
 $("#editSelector").on("change", async function () {
     if (this.value !== "") {
-        const key = editHeader.textContent.split(" ")[1]
-        const collection = key + "s"
-        showUser(collection)
-        const pull = await fetch(`/data?collection=${collection}&filter=${key}:${editSelector.value}`)
+        // Show the proper section
+        const theCollection = editHeader.textContent.split(" ")[1] + "s"
+        const key = await getCollectionKey(editHeader.textContent.split(" ")[1])
+        await showUser(theCollection)
+        // Fill that section with data
+        const pull = await fetch(`/data?collection=${theCollection}&filter=${key}:${editSelector.value}`)
         if (!pull.ok) throw new Error(`Failed to fetch ${editSelector.value} data`)
         const multiple = await pull.json()
         const document = multiple[0]
@@ -30,6 +32,15 @@ $("#editSelector").on("change", async function () {
 });
 
 // ------------------------------ Functions ------------------------------
+
+// Get the key of a given collection | If the collection value is missing the "s", the route accounts for that
+async function getCollectionKey(collection){
+    const pleaseKey = await fetch(`/collectionCheck?collection=${collection}`)
+    if (!pleaseKey.ok) throw new Error(`Failed to check collection - ${collection}`)
+    const keyFinder = await pleaseKey.json()
+    const key = keyFinder.secondAttribute
+    return key
+}
 
 // User clicks a button (either add or edit a given value)
 async function showUser(collection, edit){
@@ -64,11 +75,13 @@ async function showUser(collection, edit){
             editHeader.textContent = `What ${collection.slice(0, -1)} are you trying to edit?`
             editSelector.innerHTML = `<option value=""></option>`
                 // Set up data selector
-            const key = collection.slice(0, -1)
-            const response = collection == "languages" ? await fetch(`/data?collection=${collection}&fields=${key},parent`) : await fetch(`/data?collection=${collection}&fields=${key}`)
-            if (!response.ok) throw new Error(`Failed to fetch list of ${collection}`)
-            const collectionItems = await response.json()
-            console.log(collectionItems)
+            // Get list of keys
+            const key = await getCollectionKey(collection)
+            const getKeys = collection == "languages" ? await fetch(`/data?collection=${collection}&fields=${key},parent`) 
+                                                      : await fetch(`/data?collection=${collection}&fields=${key}`) 
+            if (!getKeys.ok) throw new Error(`Failed to fetch list of ${collection}`)
+            const collectionItems = await getKeys.json()
+
             // Put all those keys into an array and sort the array
             let list = []
             collectionItems.forEach(value => {
@@ -152,6 +165,22 @@ async function buildSection(keys, values, collection){
                     section.appendChild(input)
                 }
                 break
+            case "Embedded":
+                // Insert a header that takes up 2 columns, then 2 input values
+                header.style.gridColumnStart = "1"
+                header.style.gridColumnEnd = "3"
+                // 2 input values
+                const min = document.createElement("input")
+                const max = document.createElement("input")
+                min.placeholder = "min"
+                max.placeholder = "max"
+                min.classList.add("twoInputs")
+                min.id = index
+                // insert
+                section.appendChild(header)
+                section.appendChild(min)
+                section.appendChild(max)
+                break
             case "Array":
                 // Holding div properties
                 const input = document.createElement("div")
@@ -226,14 +255,20 @@ function fillSection(data){
     // Iterate once for every pair in schema
     let index = 0;
     for (let x = 0; x<attributeNumber; x++) {
-        // Match the current key to a matching header 
+        // Match the current key to a matching header
+        console.log(section) 
         const element = document.getElementById(x)
         // Add into document differently depending on datatype
         switch (element.tagName){
             case "INPUT":
                 // Check if the current key matches the current attribute
                 if (element.previousElementSibling.textContent.slice(0, -1) == keys[index]){
-                    element.value = values[index]
+                    // split logic depending on if there are 2 inputs or 1
+                    if (element.classList.contains("twoInputs")){
+                        console.log("Logic for 2 inputs for filling oooo")
+                    } else {
+                        element.value = values[index]
+                    }
                     index++
                 } else {
                     continue
@@ -282,7 +317,16 @@ async function saveSection(){
                 case "INPUT":
                     // Throw error in case of primary key
                     if (x == 0 && inputElement.value == "") throw new Error(`${type} must have a value`)
-                    jsonExport[type] = inputElement.value !== "" ? inputElement.value : ""
+                    // Split logic if there are 2 inputs
+                    if (inputElement.classList.contains("twoInputs")){
+                        jsonExport[type] = inputElement.value !== "" ? { 
+                            [inputElement.placeholder]: inputElement.value,
+                            [inputElement.nextElementSibling.placeholder]: inputElement.nextElementSibling.value
+                         } : ""
+                    } else {
+                        jsonExport[type] = inputElement.value !== "" ? inputElement.value : ""
+                    }
+                    
                     break
                 case "SELECT":
                 // Multiple inputs
