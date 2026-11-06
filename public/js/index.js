@@ -61,7 +61,7 @@ async function showUser(collection, edit){
         const schema = await pull.json()
         const keys = Object.keys(schema)
         const values = Object.values(schema)
-        if (show) buildSection(keys, values, collection)
+        if (show) await buildSection(keys, values, collection)
     }// Edit button
     else {
         if (editHeader.textContent.split(" ")[1] == collection.slice(0, -1)) show = false
@@ -255,8 +255,7 @@ function fillSection(data){
     // Iterate once for every pair in schema
     let index = 0;
     for (let x = 0; x<attributeNumber; x++) {
-        // Match the current key to a matching header
-        console.log(section) 
+        // Match the current key to a matching header 
         const element = document.getElementById(x)
         // Add into document differently depending on datatype
         switch (element.tagName){
@@ -265,7 +264,10 @@ function fillSection(data){
                 if (element.previousElementSibling.textContent.slice(0, -1) == keys[index]){
                     // split logic depending on if there are 2 inputs or 1
                     if (element.classList.contains("twoInputs")){
-                        console.log("Logic for 2 inputs for filling oooo")
+                        const object = Object.values(values[index])
+                        console.log(object)
+                        element.value = object[0]
+                        element.nextElementSibling.value = object[1]
                     } else {
                         element.value = values[index]
                     }
