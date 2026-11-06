@@ -6,7 +6,7 @@ const phonotacticSchema = new mongoose.Schema({
     onset_max: { type: String },
     coda_min: { type: String },
     coda_max: { type: String },
-    consonant_clusters: { type: [String], default: [] }
+    allowed_clusters: { type: [String], default: [] }
 });
 
 module.exports = mongoose.model("Phonotactic", phonotacticSchema, "phonotactics");

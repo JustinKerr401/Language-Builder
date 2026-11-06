@@ -175,7 +175,6 @@ router.post("/save", async (req, res) => {
     try {
         // Identify collection to save to
         const collection = Object.keys(req.query)[0];
-        console.log(collection)
 
         // Store the data
         const data = req.body;

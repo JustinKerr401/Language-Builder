@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 
 const phonemeSchema = new mongoose.Schema({
     phoneme: { type: String, required: true },
+    readible_form: { type: String },
     example: { type: [String], default: [] },
     type: { 
         type: String,
