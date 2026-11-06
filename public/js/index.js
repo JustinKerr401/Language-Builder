@@ -165,22 +165,6 @@ async function buildSection(keys, values, collection){
                     section.appendChild(input)
                 }
                 break
-            case "Embedded":
-                // Insert a header that takes up 2 columns, then 2 input values
-                header.style.gridColumnStart = "1"
-                header.style.gridColumnEnd = "3"
-                // 2 input values
-                const min = document.createElement("input")
-                const max = document.createElement("input")
-                min.placeholder = "min"
-                max.placeholder = "max"
-                min.classList.add("twoInputs")
-                min.id = index
-                // insert
-                section.appendChild(header)
-                section.appendChild(min)
-                section.appendChild(max)
-                break
             case "Array":
                 // Holding div properties
                 const input = document.createElement("div")
@@ -262,15 +246,7 @@ function fillSection(data){
             case "INPUT":
                 // Check if the current key matches the current attribute
                 if (element.previousElementSibling.textContent.slice(0, -1) == keys[index]){
-                    // split logic depending on if there are 2 inputs or 1
-                    if (element.classList.contains("twoInputs")){
-                        const object = Object.values(values[index])
-                        console.log(object)
-                        element.value = object[0]
-                        element.nextElementSibling.value = object[1]
-                    } else {
-                        element.value = values[index]
-                    }
+                    element.value = values[index]
                     index++
                 } else {
                     continue
@@ -319,15 +295,7 @@ async function saveSection(){
                 case "INPUT":
                     // Throw error in case of primary key
                     if (x == 0 && inputElement.value == "") throw new Error(`${type} must have a value`)
-                    // Split logic if there are 2 inputs
-                    if (inputElement.classList.contains("twoInputs")){
-                        jsonExport[type] = inputElement.value !== "" ? { 
-                            [inputElement.placeholder]: inputElement.value,
-                            [inputElement.nextElementSibling.placeholder]: inputElement.nextElementSibling.value
-                         } : ""
-                    } else {
-                        jsonExport[type] = inputElement.value !== "" ? inputElement.value : ""
-                    }
+                    jsonExport[type] = inputElement.value !== "" ? inputElement.value : ""
                     
                     break
                 case "SELECT":

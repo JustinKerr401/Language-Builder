@@ -2,14 +2,10 @@ const mongoose = require("mongoose");
 
 const phonotacticSchema = new mongoose.Schema({
     language: { type: String, required: true },
-    onset_restrictions: { type: {
-        min: Number,
-        max: Number
-    }},
-    coda_restrictions: { type: {
-        min: Number,
-        max: Number
-    }},
+    onset_min: { type: String },
+    onset_max: { type: String },
+    coda_min: { type: String },
+    coda_max: { type: String },
     consonant_clusters: { type: [String], default: [] }
 });
 
