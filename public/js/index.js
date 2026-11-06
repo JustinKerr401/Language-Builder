@@ -68,6 +68,7 @@ async function showUser(collection, edit){
             const response = collection == "languages" ? await fetch(`/data?collection=${collection}&fields=${key},parent`) : await fetch(`/data?collection=${collection}&fields=${key}`)
             if (!response.ok) throw new Error(`Failed to fetch list of ${collection}`)
             const collectionItems = await response.json()
+            console.log(collectionItems)
             // Put all those keys into an array and sort the array
             let list = []
             collectionItems.forEach(value => {
@@ -89,7 +90,7 @@ async function showUser(collection, edit){
     
 }
 
-function buildSection(keys, values, collection){
+async function buildSection(keys, values, collection){
     section.innerHTML = ""
     const sectionHeader = document.createElement("h1")
     sectionHeader.style.gridColumnStart = "1"
@@ -99,25 +100,49 @@ function buildSection(keys, values, collection){
     sectionHeader.textContent = collection
     attributeNumber = keys.length
     // Create one input for every field
-    values.forEach((value, index) => {
+    for (let index = 0; index<values.length; index++) {
+        // See if the current attribute is a key in a collection
+        const checkingCollection = await fetch(`/collectionCheck?collection=${keys[index]}`)
+        if (!checkingCollection) console.error(`Checking ${keys[index]} lead to an error`)
+        const checkedCollection = await checkingCollection.json()
+        // Add dataset if this attribute serves as a foreign key
+        if (checkedCollection.exists && checkedCollection.collectionName !== collection){
+            const datalist = document.createElement("datalist")
+            datalist.id = checkedCollection.collectionName
+            datalist.style.display = "none"
+            const keysPulling = await fetch(`/data?collection=${checkedCollection.collectionName}&fields=${checkedCollection.secondAttribute}`)
+            const collectionKeys = await keysPulling.json()
+            collectionKeys.forEach(keyObject => {
+                const option = document.createElement("option")
+                option.value = keyObject[checkedCollection.secondAttribute]
+                option.textContent = keyObject[checkedCollection.secondAttribute]
+                datalist.appendChild(option)
+            })
+            document.body.appendChild(datalist)
+        }
         const header = document.createElement("h2")
         // Append differently based on the input type
         header.textContent = `${keys[index]}:`
-        switch (value.type){
+        switch (values[index].type){
             case "String":
                 // Choose an input or select based on provided enum values
                 section.appendChild(header)
                 // Input
-                if (value.enum == null){
+                if (values[index].enum == null){
                     const input = document.createElement("input")
                     input.id = index
+                    // set datalist
+                    if (checkedCollection.exists){
+                        input.setAttribute("list", checkedCollection.collectionName)
+                    }
+                    
                     input.placeholder = `Enter the ${keys[index]}`
                     section.appendChild(input)
                 }// Select
                 else {
                     const input = document.createElement("select")
                     input.id = index
-                    const enums = value.enum
+                    const enums = values[index].enum
                     enums.forEach(choice => {
                         const option = document.createElement("option")
                         option.value = choice
@@ -158,7 +183,7 @@ function buildSection(keys, values, collection){
                 
         }
         
-    })
+    }
     // Create submit button
     const submit = document.createElement("button")
     submit.onclick = () => saveSection();
@@ -175,6 +200,8 @@ function addOption(placeholder, buttonReference, filler){
     const button = document.createElement("button")
     // input properties
     input.placeholder = `Input a ${placeholder}`
+    // set datalist
+    input.setAttribute("list", placeholder);
     // button properties
     button.onclick = () => removeOption(button);
     button.textContent = "x"

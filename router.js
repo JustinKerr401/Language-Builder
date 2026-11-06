@@ -1,8 +1,10 @@
 
 const express = require("express");
 const path = require("path");
+const mongoose = require("mongoose");
 
 const Phoneme = require('./models/phoneme')
+const Phonotactic = require('./models/phonotactic')
 const Morpheme = require('./models/morpheme')
 const Word = require('./models/word')
 const Language = require('./models/language')
@@ -21,7 +23,12 @@ router.get("/table", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "table.html"));
 });
 
-// ------------------------------ Pulling from database ------------------------------
+// Serve the word generator
+router.get("/wg", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "word_generator.html"));
+});
+
+// ------------------------------ Pulling data ------------------------------
 
 // Get the schema for a collection
 router.get("/getSchema", (req, res) => {
@@ -31,6 +38,9 @@ router.get("/getSchema", (req, res) => {
     switch (req.query.collection) {
         case "phonemes":
             model = Phoneme;
+            break
+        case "phonotactics":
+            model = Phonotactic;
             break
         case "words":
             model = Word;
@@ -90,6 +100,9 @@ router.get("/data", async (req, res) => {
             case "phonemes":
                 data = await Phoneme.find(filterObject).select(`${fieldsString} -_id`)
                 break
+            case "phonotactics":
+                data = await Phonotactic.find(filterObject).select(`${fieldsString} -_id`)
+                break
             case "morphemes":
                 data = await Morpheme.find(filterObject).select(`${fieldsString} -_id`)
                 break
@@ -107,6 +120,52 @@ router.get("/data", async (req, res) => {
     } catch {
         res.status(500).json({ error: error.message })
     }
+})
+
+router.get("/collectionCheck", async (req, res) => {
+    //      /collectionCheck?collection=___
+    const collection = req.query.collection.at(-1) === "s" 
+        ? req.query.collection 
+        : req.query.collection + "s"
+    
+    if (!collection){
+        return res.status(400).json({
+            exists: false,
+            message: "No collection name provided"
+        })
+    }
+
+    // Check whether the collection exists
+    const exists = await mongoose.connection.db
+        .listCollections({ name: collection })
+        .hasNext();
+
+    if (!exists) {
+        return res.json({
+            exists: false,
+            collectionName: collection,
+            secondAttribute: null
+        });
+    }
+
+    // Retrieve a document from the collection
+    const doc = await mongoose.connection.db
+        .collection(collection)
+        .findOne();
+
+    // Get the second attribute (including _id)
+    let secondAttribute = null;
+
+    if (doc){
+        const keys = Object.keys(doc)
+        if (keys.length > 0) secondAttribute = keys[1]
+    }
+
+    return res.json({
+        exists: true,
+        collectionName: collection,
+        secondAttribute: secondAttribute
+    })
 })
 
 // ------------------------------ Saving to database ------------------------------
@@ -130,6 +189,11 @@ router.post("/save", async (req, res) => {
                 key = "phoneme";
                 break;
             
+            case "phonotactics":
+                Model = Phonotactic
+                key = "language"
+                break
+
             case "morphemes":
                 Model = Morpheme;
                 key = "morpheme";
