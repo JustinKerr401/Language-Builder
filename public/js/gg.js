@@ -133,6 +133,8 @@ async function updatePronunciation(){
 
 async function save(){
     try {
+        if (graphemeInput.value == "") throw new Error("Missing grapheme")
+        if (languageInput.value == "") throw new Error("Missing language")
         let phonemesSave = []
         document.querySelectorAll("#phonemes p").forEach(p => {
             phonemesSave.push(p.textContent)
@@ -140,7 +142,8 @@ async function save(){
         const jsonExport = {
             grapheme: graphemeInput.value,
             language: languageInput.value,
-            phonemes: phonemesSave
+            phonemes: phonemesSave,
+            pronunciation: pronunciation.textContent.split(": ")[1]
         }
 
         // Save to database
@@ -162,12 +165,12 @@ async function save(){
         } else {
             console.error("Error:", result);
 
-            alert(`Failed to save ${collection.slice(0, -1)}.`);
+            alert(`Failed to save grapheme`);
         }
 
 
     } catch (error){
         console.error("Request failed:", error)
-        alert("Error: ", error)
+        alert(`Error: ${error.message}`)
     }
 }

@@ -72,10 +72,11 @@ async function generateWord(){
     
     for (let x = 0; x<syllables; x++){
         const syllable = buildSyllable(vowels, consonants, phonotactics)
-        randomWord = randomWord + syllable
+        randomWord = randomWord + "-" + syllable
     }
     
     // display the word
+    randomWord = randomWord.slice(1)
     display.textContent = randomWord
     // show all clusters
     showAllClusters(languagePhonemes, allPhonemes)
