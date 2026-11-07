@@ -11,6 +11,7 @@ const phonemeSchema = new mongoose.Schema({
     place: { 
         type: String,
         enum: [
+            "",
             "front",
             "near-front",
             "central",
@@ -22,14 +23,17 @@ const phonemeSchema = new mongoose.Schema({
             "alveolar",
             "post alveolar",
             "retroflex",
+            "palatal",
             "velar",
             "labial-velar",
-            "palato-alveolar"
+            "palato-alveolar",
+            "glottal"
         ]
     },
     manner: { 
         type: String,
         enum: [
+            "",
             "close",
             "near-close",
             "close-mid",
@@ -54,6 +58,14 @@ const phonemeSchema = new mongoose.Schema({
     rounded: { 
         type: String,
         enum: ["", "rounded", "unrounded"]
+    },
+    diphthong: { 
+        type: String,
+        enum: [
+            "",
+            "monophthong",
+            "diphthong"
+        ]
     }
 });
 

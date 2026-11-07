@@ -65,28 +65,51 @@ async function generateWord(){
     if (!phonotacticsPull.ok) throw new Error("Failed to fetch phonotactics")
     const phonotacticsPulled = await phonotacticsPull.json()
     const phonotactics = phonotacticsPulled[0]
+
         // Build random word
     let randomWord = ""
-    // onset
-    const onsetChars = Math.floor(
-        Math.random() * (Number(phonotactics.onset_max) - Number(phonotactics.onset_min) + 1)
-    ) + Number(phonotactics.onset_min);
-    for (let x = 0; x<onsetChars; x++){
-        randomWord = randomWord + consonants[Math.floor(Math.random() * consonants.length)]
+    let syllables = randomNumber(1, 3)
+    
+    for (let x = 0; x<syllables; x++){
+        const syllable = buildSyllable(vowels, consonants, phonotactics)
+        randomWord = randomWord + syllable
     }
-    // vowel
-    randomWord = randomWord + vowels[Math.floor(Math.random() * vowels.length)]
-    // coda
-    const codaChars = Math.floor(
-        Math.random() * (Number(phonotactics.coda_max) - Number(phonotactics.coda_min) + 1)
-    ) + Number(phonotactics.coda_min);
-    for (let x = 0; x<codaChars; x++){
-        randomWord = randomWord + consonants[Math.floor(Math.random() * consonants.length)]
-    }
+    
     // display the word
     display.textContent = randomWord
     // show all clusters
     showAllClusters(languagePhonemes, allPhonemes)
+}
+
+function randomNumber(minimum, maximum){
+    const number =  Math.floor(Math.random() * (Number(maximum) - Number(minimum) + 1) + Number(minimum))
+    return number
+}
+
+function buildSyllable(vowels, consonants, phonotactics){
+    let syllable = ""
+    const clusters = phonotactics.allowed_clusters
+    // First, the onset
+    const onsetChars = randomNumber(phonotactics.onset_min, phonotactics.onset_max)
+    switch (onsetChars){
+        case 1:
+            syllable = syllable + consonants[Math.floor(Math.random() * consonants.length)]
+            break
+        case 2:
+            syllable = syllable + clusters[Math.floor(Math.random() * clusters.length)].slice(1, -1)
+            break
+        default:
+            break
+    }
+    // Next, the vowel
+    syllable = syllable + vowels[Math.floor(Math.random() * vowels.length)]
+    // Finally, the coda
+    const codaChars = randomNumber(phonotactics.coda_min, phonotactics.coda_max)
+    for (let x = 0; x<codaChars; x++){
+        syllable = syllable + consonants[Math.floor(Math.random() * consonants.length)]
+    }
+    console.log(syllable)
+    return syllable
 }
 
 function showAllClusters(languagePhonemes, allPhonemes){
@@ -102,13 +125,14 @@ function showAllClusters(languagePhonemes, allPhonemes){
     })
     apc.innerHTML = ""
     // Iterate over every combination of phonemes and add that combination (unless they repeat...?)
-    console.log(phonemes)
     phonemes.forEach(x => {
         // Iterate over each combination
         phonemes.forEach(y => {
-            const combination = document.createElement("li")
+            if (x.phoneme !== y.phoneme){
+                const combination = document.createElement("li")
             combination.textContent = `${x.phoneme}${y.phoneme} | ${x.written}${y.written}`
             apc.appendChild(combination)
+            }
         })
     })
 }
