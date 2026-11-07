@@ -96,7 +96,7 @@ async function setPhonemeSelector(language){
 }
 
 function addPhoneme(button, value){
-    const phoneme = button.previousElementSibling.value
+    const phoneme = phonemeSelector.value
     if (phoneme !== ""){
         const display = document.createElement("p")
         display.textContent = value == null ? phoneme : value
