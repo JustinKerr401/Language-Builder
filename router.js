@@ -5,8 +5,7 @@ const mongoose = require("mongoose");
 
 const Phoneme = require('./models/phoneme')
 const Phonotactic = require('./models/phonotactic')
-const Morpheme = require('./models/morpheme')
-const Word = require('./models/word')
+const Grapheme = require('./models/grapheme')
 const Language = require('./models/language')
 
 const router = express.Router();
@@ -21,6 +20,11 @@ router.get("/", (req, res) => {
 // Serve the table page
 router.get("/table", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "table.html"));
+});
+
+// Serve the grapheme generator
+router.get("/gg", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "grapheme_generator.html"));
 });
 
 // Serve the word generator
@@ -41,6 +45,9 @@ router.get("/getSchema", (req, res) => {
             break
         case "phonotactics":
             model = Phonotactic;
+            break
+        case "graphemes":
+            model = Grapheme;
             break
         case "words":
             model = Word;
@@ -102,6 +109,9 @@ router.get("/data", async (req, res) => {
                 break
             case "phonotactics":
                 data = await Phonotactic.find(filterObject).select(`${fieldsString} -_id`)
+                break
+            case "graphemes":
+                data = await Grapheme.find(filterObject).select(`${fieldsString} -_id`)
                 break
             case "morphemes":
                 data = await Morpheme.find(filterObject).select(`${fieldsString} -_id`)
@@ -185,27 +195,22 @@ router.post("/save", async (req, res) => {
         switch (collection) {
             case "phonemes":
                 Model = Phoneme;
-                key = "phoneme";
+                key = ["phoneme"];
                 break;
             
             case "phonotactics":
                 Model = Phonotactic
-                key = "language"
+                key = ["language"]
                 break
-
-            case "morphemes":
-                Model = Morpheme;
-                key = "morpheme";
-                break;
-
-            case "words":
-                Model = Word;
-                key = "word";
-                break;
+            
+            case "graphemes":
+                Model = Grapheme
+                key = ["grapheme", "language"]
+                break
             
             case "languages":
                 Model = Language;
-                key = "language";
+                key = ["language"];
                 break
 
             default:
@@ -214,17 +219,25 @@ router.post("/save", async (req, res) => {
                 });
         }
 
-            // NOT MY CODE: CHATGPT ADDITION
         // Ensure the unique key exists
-        if (data[key] === undefined) {
+        key.forEach(individualKey => {
+            if (data[individualKey] === undefined) {
             return res.status(400).json({
                 message: `Missing required field: ${key}`
             });
         }
+        })
+        
+
+        // Assign key object
+        let keyObject = {}
+        key.forEach(individualKey => {
+            keyObject[individualKey] = data[individualKey]
+        })
 
         // Insert if new, replace if existing
         const value = await Model.findOneAndReplace(
-            { [key]: data[key] },
+            keyObject,
             data,
             {
                 upsert: true,

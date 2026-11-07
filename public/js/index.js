@@ -5,7 +5,7 @@
 let attributeNumber = 0
 
 // Make a select item nice
-$("#editSelector").select2()
+$("#selector").select2()
 
 // Relevant DOM elements
 const section = document.getElementById("toBeFilled")

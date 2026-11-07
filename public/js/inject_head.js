@@ -4,6 +4,7 @@ const stylesheet = document.createElement("link")
 header.innerHTML = `
 <a href="/">Home</a>
 <a href="/table">Table</a>
+<a href="/gg">Grapheme Generator</a>
 <a href="/wg">Word Generator</a>
 `
 

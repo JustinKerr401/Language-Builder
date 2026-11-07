@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to language builder!</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/gg.css">
+</head>
+<body>
+    
+    <main>
+        <select id="selector">
+            <option></option>
+        </select>
+        <section>
+            <h2>Grapheme:</h2>
+            <input id="graphemeInput">
+            <h2>Language:</h2>
+            <select id="languageInput">
+                <option></option>
+            </select>
+            <div id="phonemes">
+                <select id="phonemeSelector"></select>
+                <button onclick="addPhoneme(this)" id="phonemeAdder">Add phoneme</button>
+            </div>
+            <h2 id="pronunciation">Pronunciation: </h2>
+            <button id="submit" onclick="save()">Submit</button>
+        </section>
+    </main>
+
+        <!-- Scripts -->
+    <!-- Select2 stuffs -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- My scripts :) -->
+    <script src="../js/inject_head.js"></script>
+    <script src="../js/gg.js"></script>
+</body>
+</html>

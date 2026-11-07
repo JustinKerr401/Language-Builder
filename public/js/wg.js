@@ -108,7 +108,6 @@ function buildSyllable(vowels, consonants, phonotactics){
     for (let x = 0; x<codaChars; x++){
         syllable = syllable + consonants[Math.floor(Math.random() * consonants.length)]
     }
-    console.log(syllable)
     return syllable
 }
 

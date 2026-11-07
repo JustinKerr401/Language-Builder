@@ -1,0 +1,20 @@
+section{
+    display: grid;
+    grid-template-columns: 1fr 5fr 1fr 5fr;
+    gap: 20px;
+}
+
+#phonemes, #pronunciation, #submit, #submit select, #submit button{
+    grid-column-start: 1;
+    grid-column-end: -1;
+    margin: auto;
+}
+
+#submit{
+    width: 300px;
+}
+
+#phonemes{
+    display: grid;
+    grid-template-columns: 5fr 1fr;
+}
