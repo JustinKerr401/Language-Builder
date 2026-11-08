@@ -10,12 +10,21 @@
 <body>
     
     <main>
-        <div>
+        <div id="buttons">
             <button onclick=buildTable(this)>Phonemes</button>
             <button onclick=buildTable(this)>Phonotactics</button>
             <button onclick=buildTable(this)>Graphemes</button>
             <button onclick=buildTable(this)>Morphemes</button>
             <button onclick=buildTable(this)>Languages</button>
+        </div>
+        <div id="controls">
+            <h2>Filters:</h2>
+            <select id="filterSelect"></select>
+            <input placeholder="Match elements to this value" list="theDatalist" id="filterInput">
+            <button onclick="addFilter()">Add Filter</button>
+        </div>
+        <div id="filters">
+
         </div>
         <table>
             <thead>
@@ -28,6 +37,10 @@
             </tbody>
         </table>
     </main>
+
+    <datalist id="theDatalist">
+
+    </datalist>
 
     <!-- My scripts :) -->
     <script src="../js/inject_head.js"></script>

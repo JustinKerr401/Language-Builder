@@ -1,3 +1,18 @@
 tr, td, th{
     border: 1px groove black;
 }
+
+#buttons{
+    display: flex;
+    justify-content: space-around;
+}
+
+#controls{
+    display: flex;
+    justify-content: center;
+    column-gap: 20px;
+}
+
+#buttons *{
+    font-size: 1.5rem;
+}

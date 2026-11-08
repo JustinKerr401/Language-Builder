@@ -10,10 +10,12 @@ const morphemeSchema = new mongoose.Schema({
             "bound"
         ]
     },
-    meaning: { type: String },
+    ancestral_morpheme: { type: String },
+    meaning: { type: [String], default: [] },
     affixType: { 
         type: String,
         enum: [
+            "",
             "prefix",
             "suffix",
             "infix",
