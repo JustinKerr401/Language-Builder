@@ -3,11 +3,12 @@ main{
     flex-direction: column;
 }
 
+/*  Button selector */
 #toggleButtons{
     width: 80%;
     margin: auto;
     display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
+    grid-template-columns: 1fr 1fr 1fr 1fr;
     gap: 20px;
 }
 

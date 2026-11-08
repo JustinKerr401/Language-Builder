@@ -10,6 +10,7 @@ const languageInput = document.getElementById("languageInput")
 const phonemeSelector = document.getElementById("phonemeSelector")
 const phonemeAdder = document.getElementById("phonemeAdder")
 const pronunciation = document.getElementById("pronunciation")
+const functionSelector = document.getElementById("function")
 
 // Make a select item nice
 $("#selector").select2()
@@ -60,6 +61,7 @@ languageInput.addEventListener("change", function() {
 $("#selector").on("change", async function () {
     let grapheme = ""
     let language = ""
+    let functionVar = ""
     let phonemes = []
     if (this.value !== "") {
         const data = selector.value.split(" | ")
@@ -68,10 +70,12 @@ $("#selector").on("change", async function () {
         const graphemeOb = await pull.json()
         grapheme = graphemeOb[0].grapheme
         language = graphemeOb[0].language
+        functionVar = graphemeOb[0].function
         phonemes = graphemeOb[0].phonemes
     }
     graphemeInput.value = grapheme
     languageInput.value = language
+    functionSelector.value = functionVar
     document.querySelectorAll(".removeButton").forEach(button => {
         removePhoneme(button)
     })
@@ -97,15 +101,15 @@ async function setPhonemeSelector(language){
 
 function addPhoneme(button, value){
     const phoneme = phonemeSelector.value
-    if (phoneme !== ""){
+    if (phoneme !== "" || value !== ""){
         const display = document.createElement("p")
         display.textContent = value == null ? phoneme : value
         const remove = document.createElement("button")
         remove.textContent = "x"
         remove.onclick = () => removePhoneme(remove);
         remove.classList.add("removeButton")
-        button.parentElement.insertBefore(display, button.previousElementSibling)
-        button.parentElement.insertBefore(remove, button.previousElementSibling)
+        button.parentElement.insertBefore(display, phonemeSelector)
+        button.parentElement.insertBefore(remove, phonemeSelector)
     }
     updatePronunciation()
 }
@@ -142,8 +146,9 @@ async function save(){
         const jsonExport = {
             grapheme: graphemeInput.value,
             language: languageInput.value,
+            function: functionSelector.value,
             phonemes: phonemesSave,
-            pronunciation: pronunciation.textContent.split(": ")[1]
+            pronunciation: pronunciation.textContent.split(": ")[1].replace("-", "")
         }
 
         // Save to database
@@ -161,7 +166,7 @@ async function save(){
             console.log(`Grapheme saved:`, result);
 
             alert(`Grapheme saved successfully!`);
-            window.location.reload();
+            setInputs()
         } else {
             console.error("Error:", result);
 

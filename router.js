@@ -6,6 +6,7 @@ const mongoose = require("mongoose");
 const Phoneme = require('./models/phoneme')
 const Phonotactic = require('./models/phonotactic')
 const Grapheme = require('./models/grapheme')
+const Morpheme = require('./models/morpheme')
 const Language = require('./models/language')
 
 const router = express.Router();
@@ -49,15 +50,16 @@ router.get("/getSchema", (req, res) => {
         case "graphemes":
             model = Grapheme;
             break
+        case "morphemes":
+            model = Morpheme;
+            break;
         case "words":
             model = Word;
             break;
         case "languages":
             model = Language;
             break;
-        case "morphemes":
-            model = Morpheme;
-            break;
+        
         default:
             return res.status(400).json({
                 error: "Invalid collection"
@@ -206,6 +208,11 @@ router.post("/save", async (req, res) => {
             case "graphemes":
                 Model = Grapheme
                 key = ["grapheme", "language"]
+                break
+            
+            case "morphemes":
+                Model = Morpheme
+                key = ["morpheme", "language"]
                 break
             
             case "languages":

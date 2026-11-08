@@ -7,6 +7,15 @@ const languageSchema = new mongoose.Schema({
         type: String,
         enum: ["", "daughter", "dialect"]
     },
+    writing_system: { 
+        type: String,
+        enum: [
+            "",
+            "alphabet",
+            "syllabary",
+            "logography"
+        ]
+    },
     phonemes: { type: [String], default: [] },
     notes: { type: String }
 });
