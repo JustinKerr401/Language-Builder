@@ -94,7 +94,6 @@ let ascending = true;
 
 // Sort the table
 function sortTable(columnIndex) {
-    console.log("Sorting column:", columnIndex);
 
     const tbody = table.querySelector("tbody");
 
@@ -135,9 +134,7 @@ function sortTable(columnIndex) {
 function addFilter(){
     // Store value of filter
     const filter = [filterSelect.value, filterInput.value]
-    filter.forEach(variable => {
-        if (variable.length == 0) return
-    })
+    if (filter.some(variable => variable.length === 0)) return
     // Set filter display
     const display = document.createElement("h2")
     display.textContent = ` * Only showing rows where ${filter[0]} = ${filter[1]}`
