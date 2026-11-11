@@ -1,0 +1,89 @@
+
+
+#languageSelector{
+    width: 250px;
+    height: 40px;
+    font-size: 18px;
+}
+
+#menuSection{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.editSection{
+    display: none
+}
+
+#phonemesEditor{
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+#languagePhonemeList{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 20%;
+    margin: auto;
+}
+
+#languagePhonemeList *{
+    margin: 0px;
+}
+
+#switches{
+    padding: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    place-items: center;
+    column-gap: 20px;
+}
+
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 50px;
+    height: 28px;
+}
+
+/* Hide the default checkbox */
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+/* Switch background */
+.slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background-color: #ccc;
+    border-radius: 34px;
+    transition: 0.3s;
+}
+
+/* Switch circle */
+.slider::before {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 20px;
+    left: 4px;
+    bottom: 4px;
+    background-color: white;
+    border-radius: 50%;
+    transition: 0.3s;
+}
+
+/* ON state */
+input:checked + .slider {
+    background-color: #2196F3;
+}
+
+/* Move circle to the right */
+input:checked + .slider::before {
+    transform: translateX(22px);
+}

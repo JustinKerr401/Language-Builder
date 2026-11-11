@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Language editor</title>
+    <link rel="stylesheet" href="../css/main.css">
+    <link rel="stylesheet" href="../css/language_editor.css">
+</head>
+<body>
+    <main>
+        <section id="menuSection">
+            <h1>What language do you want to edit?</h1>
+            <select id="languageSelector">
+                <option></option>
+            </select>
+            <div id="switches">
+                <h2>Phonemes</h2>
+                <h2>Phonotactics</h2>
+                <h2>Orthography</h2>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+                <h2>Graphemes</h2>
+                <h2>Morphemes</h2>
+                <div></div>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+                <label class="switch">
+                    <input type="checkbox">
+                    <span class="slider"></span>
+                </label>
+            </div>
+        </section>
+        <section id="phonemesEditor" class="editSection">
+            <h2 id="languagePhonemeListHeader"></h2>
+            <div id="languagePhonemeList"></div>
+            <h2>Add a phoneme</h2>
+            <select id="phonemeSelector" style="width: 70px">
+                <option></option>
+            </select>
+            <button>Submit</button>
+        </section>
+    </main>
+
+        <!-- Scripts -->
+    <!-- Select2 stuffs -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <!-- My scripts :) -->
+    <script src="../js/inject_head.js"></script>
+    <script src="../js/language_editor.js"></script>
+</body>
+</html>

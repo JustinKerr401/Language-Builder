@@ -19,6 +19,11 @@ router.get("/", (req, res) => {
 });
 
 // Serve the table page
+router.get("/le", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "language_editor.html"));
+});
+
+// Serve the table page
 router.get("/table", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "table.html"));
 });
@@ -26,11 +31,6 @@ router.get("/table", (req, res) => {
 // Serve the grapheme generator
 router.get("/gg", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "grapheme_generator.html"));
-});
-
-// Serve the word generator
-router.get("/wg", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "html", "word_generator.html"));
 });
 
 // ------------------------------ Pulling data ------------------------------
