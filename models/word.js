@@ -9,6 +9,8 @@ const wordSchema = new mongoose.Schema({
     function: { type: String },
     morphemes: { type: [String], default: [] },
     meaning: { type: [String], default: [] }
+},{
+    versionKey: false
 });
 
 module.exports = mongoose.model("Word", wordSchema, "words");

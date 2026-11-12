@@ -6,6 +6,8 @@ const graphemeSchema = new mongoose.Schema({
     function: { type: String },
     phonemes: { type: [String] },
     pronunciation: { type: String }
+},{
+    versionKey: false
 });
 
 module.exports = mongoose.model("Grapheme", graphemeSchema, "graphemes");

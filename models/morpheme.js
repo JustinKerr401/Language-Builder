@@ -25,6 +25,8 @@ const morphemeSchema = new mongoose.Schema({
     inspiration_word: { type: String },
     inspiration_language: { type: String },
     inspiration_meaning: { type: [String], default: [] }
+},{
+    versionKey: false
 });
 
 module.exports = mongoose.model("Morpheme", morphemeSchema, "morphemes");

@@ -242,16 +242,33 @@ router.post("/save", async (req, res) => {
             keyObject[individualKey] = data[individualKey]
         })
 
-        // Insert if new, update if existing
-        const value = await Model.findOneAndUpdate(
-            keyObject,
-            data,
-            {
-                upsert: true,
-                returnDocument: 'after',
-                runValidators: true
-            }
-        );
+        // Check whether the document already exists
+        const existing = await Model.findOne(keyObject);
+
+        let value;
+
+        if (existing) {
+            // Update only specified attributes
+            value = await Model.findOneAndUpdate(
+                keyObject,
+                { $set: updateData },
+                {
+                    returnDocument: 'after',
+                    runValidators: true
+                }
+            );
+        } else {
+            // Construct new document in schema order
+            const orderedData = {};
+
+            Object.keys(Model.schema.paths).forEach(path => {
+                if (path !== "_id" && path !== "__v" && data[path] !== undefined) {
+                    orderedData[path] = data[path];
+                }
+            });
+
+            value = await new Model(orderedData).save();
+        }
 
         res.status(200).json({
             message: `${collection} saved successfully!`,

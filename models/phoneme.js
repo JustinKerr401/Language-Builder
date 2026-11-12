@@ -67,6 +67,8 @@ const phonemeSchema = new mongoose.Schema({
             "diphthong"
         ]
     }
+},{
+    versionKey: false
 });
 
 module.exports = mongoose.model("Phoneme", phonemeSchema, "phonemes");

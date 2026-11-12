@@ -27,7 +27,7 @@ $("#editSelector").on("change", async function () {
         if (!pull.ok) throw new Error(`Failed to fetch ${editSelector.value} data`)
         const multiple = await pull.json()
         const document = multiple[0]
-        fillSection(document)
+        fillSection(editSelector.value, document)
     }
 });
 
@@ -234,54 +234,26 @@ function removeOption(button){
 }
 
 // Fill a section with data from a document
-function fillSection(data){
-    const keys = Object.keys(data)
-    const values = Object.values(data)
-    // Iterate once for every key
-    let index = 0;
-    for (let x = 0; x<attributeNumber; x++) {
-        // Match the current key to a matching header 
-        const element = document.getElementById(x)
-        // Add into document differently depending on datatype
-        if (element !== null){
-            switch (element.tagName){
-                case "INPUT":
-                    // Check if the current key matches the current attribute
-                    if (element.previousElementSibling.textContent.slice(0, -1) == keys[index]){
-                        element.value = values[index]
-                        index++
-                    } else {
-                        continue
-                    }
-                    break
-                case "SELECT":
-                    if (element.previousElementSibling.textContent.slice(0, -1) == keys[index]){
-                        element.value = values[index]
-                        index++
-                    } else {
-                        continue
-                    }
-                    break
-                case "DIV":
-                    // Only process if there is data to input
-                    console.log("DIV", element.firstElementChild.textContent.slice(0, -1), keys[index])
-                    if (element.firstElementChild.textContent.slice(0, -1) == keys[index] && values[index].length > 0){
-                        // Get rid of placeholder inputs
-                        element.querySelectorAll(".deleteButton").forEach(button => {
-                            removeOption(button)
-                        })
-                        // Add data
-                        console.log(values, index, values[index])
-                        values[index]?.forEach(value => {
-                            addOption(keys[index], element.querySelector(".addAnother"), value)
-                        })
-                        index++
-                    }
-                    break
+function fillSection(key, data){
+    const keys = data == null ? null : Object.keys(data) 
+    const values = data == null ? null : Object.values(data)
+    document.getElementById(0).value = key
+    // Only operate if data isn't null
+    if (keys !== null){
+        // Since there will always be more key value pairs than elements, iterate through key value pairs
+        let obID = 1
+        for (let index=1; index<keys.length; index++){
+            // Process if the key doesn't equal __v or phonemes
+            if (keys[index] !== "__v" && keys[index] !== "phonemes"){
+                while (document.getElementById(obID) == null){
+                    obID++
+                }
+                document.getElementById(obID).value = obID == 0 ? key : values[obID]
+                obID++
             }
         }
-        
     }
+    
 }
 
 // Save an item to a collection

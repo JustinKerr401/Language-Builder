@@ -9,6 +9,8 @@ const languageSchema = new mongoose.Schema({
     },
     phonemes: { type: [String], default: [] },
     notes: { type: String }
+},{
+    versionKey: false
 });
 
 module.exports = mongoose.model("Language", languageSchema, "languages");

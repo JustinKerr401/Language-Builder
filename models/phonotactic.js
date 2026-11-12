@@ -7,6 +7,8 @@ const phonotacticSchema = new mongoose.Schema({
     coda_min: { type: String },
     coda_max: { type: String },
     allowed_clusters: { type: [String], default: [] }
+},{
+    versionKey: false
 });
 
 module.exports = mongoose.model("Phonotactic", phonotacticSchema, "phonotactics");
