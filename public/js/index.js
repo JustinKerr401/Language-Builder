@@ -167,6 +167,7 @@ async function buildSection(keys, values, collection){
                 break
             case "Array":
                 // Holding div properties
+                if (keys[index] == "phonemes") break
                 const input = document.createElement("div")
                 input.style.gridColumnStart = "1"
                 input.style.gridColumnEnd = "-1"
@@ -193,7 +194,7 @@ async function buildSection(keys, values, collection){
                 addOption(keys[index], addOptionButton)
                 break
             default:
-                
+                break
         }
         
     }
@@ -236,45 +237,50 @@ function removeOption(button){
 function fillSection(data){
     const keys = Object.keys(data)
     const values = Object.values(data)
-    // Iterate once for every pair in schema
+    // Iterate once for every key
     let index = 0;
     for (let x = 0; x<attributeNumber; x++) {
         // Match the current key to a matching header 
         const element = document.getElementById(x)
         // Add into document differently depending on datatype
-        switch (element.tagName){
-            case "INPUT":
-                // Check if the current key matches the current attribute
-                if (element.previousElementSibling.textContent.slice(0, -1) == keys[index]){
-                    element.value = values[index]
-                    index++
-                } else {
-                    continue
-                }
-                break
-            case "SELECT":
-                if (element.previousElementSibling.textContent.slice(0, -1) == keys[index]){
-                    element.value = values[index]
-                    index++
-                } else {
-                    continue
-                }
-                break
-            case "DIV":
-                // Only process if there is data to input
-                if (values[index].length > 0){
-                    // Get rid of placeholder inputs
-                    element.querySelectorAll(".deleteButton").forEach(button => {
-                        removeOption(button)
-                    })
-                    // Add data
-                    values[index].forEach(value => {
-                        addOption(keys[index], element.querySelector(".addAnother"), value)
-                    })
-                }
-                index++
-                break
+        if (element !== null){
+            switch (element.tagName){
+                case "INPUT":
+                    // Check if the current key matches the current attribute
+                    if (element.previousElementSibling.textContent.slice(0, -1) == keys[index]){
+                        element.value = values[index]
+                        index++
+                    } else {
+                        continue
+                    }
+                    break
+                case "SELECT":
+                    if (element.previousElementSibling.textContent.slice(0, -1) == keys[index]){
+                        element.value = values[index]
+                        index++
+                    } else {
+                        continue
+                    }
+                    break
+                case "DIV":
+                    // Only process if there is data to input
+                    console.log("DIV", element.firstElementChild.textContent.slice(0, -1), keys[index])
+                    if (element.firstElementChild.textContent.slice(0, -1) == keys[index] && values[index].length > 0){
+                        // Get rid of placeholder inputs
+                        element.querySelectorAll(".deleteButton").forEach(button => {
+                            removeOption(button)
+                        })
+                        // Add data
+                        console.log(values, index, values[index])
+                        values[index]?.forEach(value => {
+                            addOption(keys[index], element.querySelector(".addAnother"), value)
+                        })
+                        index++
+                    }
+                    break
+            }
         }
+        
     }
 }
 
@@ -288,28 +294,31 @@ async function saveSection(){
         // Iterate once for every item to save
         for (let x = 0; x<attributeNumber; x++){
             const inputElement = document.getElementById(x)
-            const type = inputElement.previousElementSibling.textContent.slice(0, -1)
+            const type = inputElement !== null ? inputElement.previousElementSibling.textContent.slice(0, -1) : "null"
             // Split processing depending on type of input
-            switch (inputElement.tagName){
-                // Singular input
-                case "INPUT":
-                    // Throw error in case of primary key
-                    if (x == 0 && inputElement.value == "") throw new Error(`${type} must have a value`)
-                    jsonExport[type] = inputElement.value !== "" ? inputElement.value : ""
-                    
-                    break
-                case "SELECT":
-                // Multiple inputs
-                    jsonExport[type] = inputElement.value !== "" ? inputElement.value : ""
-                    break
-                case "DIV":
-                    const type2 = inputElement.querySelector("h2").textContent.slice(0, -1)
-                    jsonExport[type2] = []
-                    inputElement.querySelectorAll("input").forEach(input => {
-                        if (input.value !== "") jsonExport[type2].push(input.value)
-                    })
-                    break
+            if (inputElement !== null){
+                switch (inputElement.tagName){
+                    // Singular input
+                    case "INPUT":
+                        // Throw error in case of primary key
+                        if (x == 0 && inputElement.value == "") throw new Error(`${type} must have a value`)
+                        jsonExport[type] = inputElement.value !== "" ? inputElement.value : ""
+                        
+                        break
+                    case "SELECT":
+                    // Multiple inputs
+                        jsonExport[type] = inputElement.value !== "" ? inputElement.value : ""
+                        break
+                    case "DIV":
+                        const type2 = inputElement.querySelector("h2").textContent.slice(0, -1)
+                        jsonExport[type2] = []
+                        inputElement.querySelectorAll("input").forEach(input => {
+                            if (input.value !== "") jsonExport[type2].push(input.value)
+                        })
+                        break
+                }
             }
+            
         }
 
         // Save to database

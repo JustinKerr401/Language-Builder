@@ -1,7 +1,10 @@
 
 
-// DOM elements
+    // DOM elements
+// menu
 const languageSelector = document.getElementById("languageSelector")
+// phoneme section
+const languagePhonemeListHeader = document.getElementById("languagePhonemeListHeader")
 const languagePhonemeList = document.getElementById("languagePhonemeList")
 const phonemeSelector = document.getElementById("phonemeSelector")
 
@@ -47,13 +50,12 @@ $("#phonemeSelector").on("change", () => {
             .some(p => p.textContent.trim() === phonemeSelector.value)
         // Only add if exists is false
         if (!exists) {
-            console.log("Triggered the condition")
             addPhonemeToList(phonemeSelector.value)
         }
     }
 })
 
-// ------------------------------ Functions ------------------------------
+// ------------------------------ Setup functions ------------------------------
 
 async function getLanguages(){
     const pull = await fetch(`/data?collection=languages&fields=language`)
@@ -69,9 +71,9 @@ async function getLanguages(){
 
 async function buildEditor(collection){
     // Set up the section differently depending on collection / setting
+    document.getElementById(`${collection}Editor`).style.display = "flex"
     switch(collection){
         case "phonemes":
-            document.getElementById(`${collection}Editor`).style.display = "flex"
             // Pull all phonemes from database
             let pull = await fetch(`/data?collection=phonemes&fields=phoneme`)
             if (!pull.ok) throw new Error("Couldn't fetch phonemes from database")
@@ -84,13 +86,13 @@ async function buildEditor(collection){
                 // Something to add a phoneme (don't if phoneme is already listed)
                 // A submit button
             // Set header text
-            document.getElementById("languagePhonemeListHeader").textContent = `${languageSelector.value}'s phonemes`
+            languagePhonemeListHeader.textContent = `${languageSelector.value} phonemes`
             // Fill languagePhonemeList
             languagePhonemes[0].phonemes.forEach(phoneme => {
                 addPhonemeToList(phoneme)
             })
             // Fill phoneme selector with options
-            phonemeSelector.innerHTML = ""
+            phonemeSelector.innerHTML = "<option></option>"
             phonemes.forEach(phonemeOb => {
                 const option = document.createElement("option")
                 option.value = phonemeOb.phoneme
@@ -117,4 +119,53 @@ function addPhonemeToList(value){
 function deleteOption(button){
     button.previousElementSibling.remove()
     button.remove()
+}
+
+// ------------------------------ Saving functions ------------------------------
+
+async function submitPhonemesEditor(){
+    
+    try {
+        // Get list of phonemes
+        let phonemes = []
+        document.querySelectorAll("#languagePhonemeList p").forEach(phoneme => {
+            phonemes.push(phoneme.textContent)
+        })
+        phonemes.sort()
+        // Get language
+        const language = languagePhonemeListHeader.textContent.split(" ").slice(0, -1).join(" ")
+        // Build object
+        const jsonExport = {
+            language: language,
+            phonemes: phonemes
+        }
+        // Save to database
+        const response = await fetch(`/save?languages`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(jsonExport)
+        })
+
+        const result = await response.json()
+
+        if (response.ok) {
+            console.log(`${languagePhonemeListHeader.textContent.split(" ").slice(0, -1).join(" ")} saved:`, result);
+
+            alert(`${languagePhonemeListHeader.textContent.split(" ").slice(0, -1).join(" ")} saved successfully!`);
+            window.location.reload();
+        } else {
+            console.error("Error:", result);
+
+            alert(`Failed to save ${languagePhonemeListHeader.textContent.split(" ").slice(0, -1).join(" ")}'s phonemes`);
+        }
+    } catch (error){
+        console.error("Request failed:", error)
+        alert("Error: ", error)
+    }
+
+    
+
+
 }

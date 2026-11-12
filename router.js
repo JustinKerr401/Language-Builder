@@ -242,8 +242,8 @@ router.post("/save", async (req, res) => {
             keyObject[individualKey] = data[individualKey]
         })
 
-        // Insert if new, replace if existing
-        const value = await Model.findOneAndReplace(
+        // Insert if new, update if existing
+        const value = await Model.findOneAndUpdate(
             keyObject,
             data,
             {
