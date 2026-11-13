@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 
 const morphemeSchema = new mongoose.Schema({
-    language: { type: String, required: true },
     morpheme: { type: String, required: true },
+    language: { type: String, required: true },
     type: { 
         type: String,
         enum: [

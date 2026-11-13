@@ -19,6 +19,16 @@ $("#phonemeSelector").select2()
 
 // ------------------------------ Event Listeners ------------------------------
 
+// Unselect all switches if choosing an option in the language selector
+$("#languageSelector").on("change", () => {
+    // Uncheck all switchElements
+    switchInputs.forEach(turnOff => {
+        turnOff.checked = false
+    })
+    document.getElementById(`phonemesEditor`).style.display = "none"
+    othersEditor.style.display = "none"
+})
+
 // Set function for every language editor switch
 const switchInputs = document.querySelectorAll("#switches .switch input")
 switchInputs.forEach(switchElement => {
@@ -107,9 +117,45 @@ async function buildEditor(collection){
         default:
             // Set section + header
             othersEditor.innerHTML = `
-            <h1>${languageSelector.value} ${collection}</h1>
+            <h1 id="othersEditorHeader">${languageSelector.value} ${collection}</h1>
             `
             othersEditor.style.display = "grid"
+            // Create a select element for graphemes and morphemes
+            if (collection == "graphemes" || collection == "morphemes") {
+                // Get elements
+                const elementPull = await fetch(`/data?collection=${collection}&filter=language:${languageSelector.value}`)
+                if (!elementPull) throw new Error ("Failed to fetch elements")
+                const elementsPulled = await elementPull.json()
+                // Get useful string
+                const attribute = document.getElementById("othersEditorHeader").textContent.split(" ").at(-1).slice(0, -1)
+                // Build select element
+                    // Holding div
+                const div = document.createElement("div")
+                div.style.gridColumn = "1 / -1"
+                othersEditor.appendChild(div)
+                    // Select element
+                const elementSelector = document.createElement("select")
+                elementSelector.id = "elementSelector"
+                elementSelector.style.height = "70px"
+                elementSelector.style.width = "100%"
+                elementSelector.innerHTML = `<option> -- Select a ${attribute.toUpperCase()} you want to edit -- </option>`
+                div.appendChild(elementSelector)
+                $("#elementSelector").select2()
+                // Fill select element
+                elementsPulled.forEach(element => {
+                    const option = document.createElement("option")
+                    option.textContent = element[attribute]
+                    option.textContent = element[attribute]
+                    elementSelector.appendChild(option)
+                })
+                // Set event listener to fill section with data
+                $("#elementSelector").on("change", async function () {
+                    // Only fill if a value is selected
+                    if (this.value !== "") {
+                        await fillSection(`${attribute}s`, languageSelector.value, elementSelector.value)
+                    }
+                });
+            }
             // Get schema for collection to build properly
             let request = await fetch(`/getSchema?collection=${collection}`)
             if (!request.ok) throw new Error (`Failed to retrieve schema for ${collection}`)
@@ -149,7 +195,7 @@ async function buildEditor(collection){
                         const div = document.createElement("div")
                         div.classList.add("multipleInputs")
                         const header = document.createElement("h2")
-                        header.textContent = `${keys[index]}`
+                        header.textContent = `${keys[index]}:`
                         const button = document.createElement("button")
                         button.textContent = `+ another ${keys[index]}`
                         button.onclick = () => addOption(keys[index], button);
@@ -163,11 +209,55 @@ async function buildEditor(collection){
             }
             break
     }
+    // Trigger fillSection if needed
+    if (collection == "phonotactics" || collection == "orthography") {
+        await fillSection(document.getElementById("othersEditorHeader").textContent.split(" ").at(-1), languageSelector.value)
+    } 
 }
 
-function addOption(placeholder, reference){
+async function fillSection(collection, language, key){
+    console.log(`Collection: ${collection}\nLanguage: ${language}\nKey: ${key}`)
+    // Build proper query string (add final filter if necessary)
+    const primary = `/data?collection=${collection}&filter=language:${language}`
+    const keyString = key == undefined ? "" : `,${collection.slice(0, -1)}:${key}`
+    const queryString = primary + keyString
+    // Pull from database
+    const pull = await fetch(queryString)
+    if (!pull.ok) throw new Error ("Couldn't get data to fill section")
+    const data = await pull.json()
+    const keysValues = Object.entries(data[0])
+    // Iterate over each key-value pair to fill the section
+    for (let index = 0; index<keysValues.length; index++){
+        console.log(keysValues[index])
+        // Get all possible input fields and then match the current key to the correct one
+        document.querySelectorAll("#othersEditor input").forEach(input => {
+            // Detect matching key
+            if (input.previousElementSibling.textContent.slice(0, -1) == keysValues[index][0]){
+                // Insert differently depending on datatype
+                    // String case
+                if (typeof keysValues[index][1] === "string"){
+                    input.value = keysValues[index][1]
+                }   // Array case
+                else {
+                    // Firstly, remove placeholder value (but store reference to "add" button first!)
+                    const addOptionButton = input.nextElementSibling.nextElementSibling
+                    removeOption(input.nextElementSibling)
+                    // Add an option for value
+                    keysValues[index][1].forEach(value => {
+                        addOption("none", addOptionButton, value)
+                    })
+                }
+            }
+        })
+    }
+}
+
+function addOption(placeholder, reference, value){
+    // Set input
     const input = document.createElement("input")
     input.placeholder = `Input a ${placeholder}`
+    if (value !== undefined) input.value = value
+    // Set delete button
     const button = document.createElement("button")
     button.onclick = () => removeOption(button);
     button.textContent = "x"
