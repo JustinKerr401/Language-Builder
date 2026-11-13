@@ -5,6 +5,7 @@ const mongoose = require("mongoose");
 
 const Phoneme = require('./models/phoneme')
 const Phonotactic = require('./models/phonotactic')
+const Orthography = require('./models/orthography')
 const Grapheme = require('./models/grapheme')
 const Morpheme = require('./models/morpheme')
 const Language = require('./models/language')
@@ -46,6 +47,9 @@ router.get("/getSchema", (req, res) => {
             break
         case "phonotactics":
             model = Phonotactic;
+            break
+        case "orthography":
+            model = Orthography;
             break
         case "graphemes":
             model = Grapheme;
@@ -111,6 +115,9 @@ router.get("/data", async (req, res) => {
                 break
             case "phonotactics":
                 data = await Phonotactic.find(filterObject).select(`${fieldsString} -_id`)
+                break
+            case "orthography":
+                data = await Orthography.find(filterObject).select(`${fieldsString} -_id`)
                 break
             case "graphemes":
                 data = await Grapheme.find(filterObject).select(`${fieldsString} -_id`)
@@ -202,6 +209,11 @@ router.post("/save", async (req, res) => {
             
             case "phonotactics":
                 Model = Phonotactic
+                key = ["language"]
+                break
+            
+            case "orthography":
+                Model = Orthography
                 key = ["language"]
                 break
             
