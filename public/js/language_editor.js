@@ -7,6 +7,8 @@ const languageSelector = document.getElementById("languageSelector")
 const languagePhonemeListHeader = document.getElementById("languagePhonemeListHeader")
 const languagePhonemeList = document.getElementById("languagePhonemeList")
 const phonemeSelector = document.getElementById("phonemeSelector")
+// others section
+const othersEditor = document.getElementById("othersEditor")
 
 // Startup functions
 getLanguages()
@@ -70,10 +72,11 @@ async function getLanguages(){
 }
 
 async function buildEditor(collection){
-    // Set up the section differently depending on collection / setting
-    document.getElementById(`${collection}Editor`).style.display = "flex"
+    // Set up the section differently depending on setting
     switch(collection){
+        // Editing phonemes
         case "phonemes":
+            document.getElementById(`phonemesEditor`).style.display = "flex"
             // Pull all phonemes from database
             let pull = await fetch(`/data?collection=phonemes&fields=phoneme`)
             if (!pull.ok) throw new Error("Couldn't fetch phonemes from database")
@@ -99,11 +102,85 @@ async function buildEditor(collection){
                 option.textContent = phonemeOb.phoneme
                 phonemeSelector.appendChild(option)
             })
-                
             break
+        // Editing anything else
         default:
+            // Set section + header
+            othersEditor.innerHTML = `
+            <h1>${languageSelector.value} ${collection}</h1>
+            `
+            othersEditor.style.display = "grid"
+            // Get schema for collection to build properly
+            let request = await fetch(`/getSchema?collection=${collection}`)
+            if (!request.ok) throw new Error (`Failed to retrieve schema for ${collection}`)
+            const schema = await request.json()
+            const keys = Object.keys(schema)
+            const values = Object.values(schema)
+            // Iterate over each key-value pair to add an input
+            for (let index=0; index<keys.length; index++){
+                if (keys[index] == "language") continue
+                // Add an input properly depending on datatype
+                switch (values[index].type){
+                    case "String":
+                        // Input
+                        if (values[index].enum == null){
+                            const label = document.createElement("h2")
+                            label.textContent = `${keys[index]}:`
+                            const input = document.createElement("input")
+                            input.placeholder = `Enter the ${keys[index]}`
+                            othersEditor.appendChild(label)
+                            othersEditor.appendChild(input)
+                        } // Select
+                        else {
+                            const label = document.createElement("h2")
+                            label.textContent = `${keys[index]}:`
+                            const input = document.createElement("select")
+                            values[index].enum.forEach(variant => {
+                                const option = document.createElement("option")
+                                option.textContent = variant
+                                option.value = variant
+                                input.appendChild(option)
+                            })
+                            othersEditor.appendChild(label)
+                            othersEditor.appendChild(input)
+                        }
+                        break
+                    case "Array":
+                        const div = document.createElement("div")
+                        div.classList.add("multipleInputs")
+                        const header = document.createElement("h2")
+                        header.textContent = `${keys[index]}`
+                        const button = document.createElement("button")
+                        button.textContent = `+ another ${keys[index]}`
+                        button.onclick = () => addOption(keys[index], button);
+                        button.style.gridColumn = "1 / -1"
+                        othersEditor.appendChild(div)
+                        div.appendChild(header)
+                        div.appendChild(button)
+                        addOption(keys[index], button)
+                        break
+                }
+            }
             break
     }
+}
+
+function addOption(placeholder, reference){
+    const input = document.createElement("input")
+    input.placeholder = `Input a ${placeholder}`
+    const button = document.createElement("button")
+    button.onclick = () => removeOption(button);
+    button.textContent = "x"
+    button.classList.add("deleteButton")
+    // append
+    reference.parentElement.insertBefore(input, reference)
+    reference.parentElement.insertBefore(button, reference)
+}
+
+// Delete an option in a multi-input field
+function removeOption(button){
+    button.previousElementSibling.remove()
+    button.remove()
 }
 
 function addPhonemeToList(value){
