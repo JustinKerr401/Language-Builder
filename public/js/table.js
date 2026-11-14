@@ -50,6 +50,8 @@ async function buildTable(collection){
         
         </tbody>
     `
+    // Set title
+    document.title = `${collectionDisplayer.textContent} Table`
     // Get all entries from a given collection
     collection = collection.toLowerCase()
     const response = await fetch(`/data?collection=${collection}`)
