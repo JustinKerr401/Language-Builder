@@ -135,7 +135,6 @@ async function buildTable(collection){
         })
 
     })
-    sortTable(0)
     buildDatalist()
 }
 
