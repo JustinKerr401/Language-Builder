@@ -11,12 +11,14 @@
     
     <main>
         <div id="buttons">
-            <button onclick=buildTable(this)>Phonemes</button>
-            <button onclick=buildTable(this)>Phonotactics</button>
-            <button onclick=buildTable(this)>Graphemes</button>
-            <button onclick=buildTable(this)>Morphemes</button>
-            <button onclick=buildTable(this)>Languages</button>
+            <button onclick=buildTable(this.textContent)>Phonemes</button>
+            <button onclick=buildTable(this.textContent)>Languages</button>
+            <button onclick=buildTable(this.textContent)>Phonotactics</button>
+            <button onclick=buildTable(this.textContent)>Orthography</button>
+            <button onclick=buildTable(this.textContent)>Graphemes</button>
+            <button onclick=buildTable(this.textContent)>Morphemes</button>
         </div>
+        <h1 id="collectionDisplayer" style="margin: auto;"></h1>
         <div id="controls">
             <h2>Filters:</h2>
             <select id="filterSelect"></select>

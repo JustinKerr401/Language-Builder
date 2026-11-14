@@ -10,6 +10,15 @@ const Grapheme = require('./models/grapheme')
 const Morpheme = require('./models/morpheme')
 const Language = require('./models/language')
 
+const models = {
+    phonemes: Phoneme,
+    phonotactics: Phonotactic,
+    orthography: Orthography,
+    graphemes: Grapheme,
+    morphemes: Morpheme,
+    languages: Language
+}
+
 const router = express.Router();
 
 // ------------------------------ Serving pages ------------------------------
@@ -296,5 +305,48 @@ router.post("/save", async (req, res) => {
         });
     }
 });
+
+// ------------------------------ Deleting from database ------------------------------
+
+router.delete("/delete", async (req, res) => {
+    // /delete?collection=____
+    try {
+        const { collection } = req.query
+        const attributes = req.body
+
+        const Model = models[collection]
+
+        if (!Model) {
+            return res.status(400).json({
+                error: "Invalid collection"
+            })
+        }
+
+        // Make sure attributes were provided
+        if (!attributes || Object.keys(attributes).length === 0) {
+            return res.status(400).json({
+                error: "No search attributes provided"
+            });
+        }
+
+        // Delete matching item
+        const deletedItem = await Model.findOneAndDelete(attributes);
+
+        if (!deletedItem) {
+            return res.status(404).json({
+                error: "Item not found"
+            });
+        }
+
+        return res.status(200).json({
+            message: "Item successfully deleted",
+            deletedItem
+        });
+
+        
+    } catch (error) {
+        res.status(500).json({ error: error.message })
+    }
+})
 
 module.exports = router;

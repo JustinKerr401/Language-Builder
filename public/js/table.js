@@ -4,6 +4,7 @@ const filterSelect = document.getElementById("filterSelect")
 const filterInput = document.getElementById("filterInput")
 const theDatalist = document.getElementById("theDatalist")
 const filters = document.getElementById("filters")
+const collectionDisplayer = document.getElementById("collectionDisplayer")
 
 // Update input datalist
 filterSelect.addEventListener("change", ()   => {
@@ -32,11 +33,12 @@ function buildDatalist(){
 }
 
 // Fill the table with data
-async function buildTable(button){
+async function buildTable(collection){
     // Clear objects
     filterSelect.innerHTML = ""
     filters.innerHTML = ""
     filterInput.value = ""
+    collectionDisplayer.textContent = collection
     // Clear table
     table.innerHTML = `
     <thead>
@@ -49,7 +51,7 @@ async function buildTable(button){
         </tbody>
     `
     // Get all entries from a given collection
-    const collection = button.textContent.toLowerCase()
+    collection = collection.toLowerCase()
     const response = await fetch(`/data?collection=${collection}`)
     if (!response.ok) throw new Error(`Failed to fetch list of ${collection}`)
     const documents = await response.json()
@@ -70,8 +72,11 @@ async function buildTable(button){
         option.value = text
         option.textContent = text
         filterSelect.appendChild(option)
-
     })
+        // Delete button column
+    const deleteColumn = document.createElement("th")
+    deleteColumn.classList.add("delete-column")
+    document.querySelector("table thead tr").appendChild(deleteColumn)
     // Iterate over each document in collection
     documents.forEach(data => {
         const row = document.createElement("tr")
@@ -81,7 +86,52 @@ async function buildTable(button){
             cell.textContent = data[attribute]
             row.appendChild(cell)
         })
+        // Add delete button
+        const deleteCell = document.createElement("td")
+        deleteCell.innerHTML = `<i class="fa-solid fa-trash-can"></i>`
+        deleteCell.classList.add("delete-column")
+        row.appendChild(deleteCell)
         document.querySelector("table tbody").appendChild(row)
+
+        // Add event listener to delete icon
+        deleteCell.querySelector("i").addEventListener("click", (event) => {
+            // Set relative variables
+            const icon = event.currentTarget
+            const row = icon.parentElement.parentElement
+            const values = []
+            row.querySelectorAll("td").forEach(value => {
+                if (!value.classList.contains("delete-column")) values.push(value.textContent)
+            })
+            const keys = values.slice(0, 2)
+            // Create the background overlay
+            const overlay = document.createElement("div");
+            overlay.classList.add("modal-overlay");
+
+            // Create the popup itself
+            const popup = document.createElement("div");
+            popup.classList.add("modal");
+
+            // Add content
+            popup.innerHTML = `
+                <h2>Delete ${collection} entry ${values[0]}?</h2>
+                <p>Are you sure you want to delete this entry?</p>
+                <p>${values.join(" | ")}</p>
+
+                <button class="confirm-delete"
+                    onclick='deleteEntry(${JSON.stringify(keys)})'>
+                    Delete
+                </button>
+
+                <button class="cancel-delete"
+                    onclick="document.querySelector('.modal-overlay').remove()">
+                    Cancel
+                </button>
+            `;
+
+            overlay.appendChild(popup);
+            document.body.appendChild(overlay);
+        })
+
     })
     sortTable(0)
     buildDatalist()
@@ -148,4 +198,46 @@ function addFilter(){
             row.remove()
         }
     })
+}
+
+async function deleteEntry(keys){
+    try {
+        document.querySelector('.modal-overlay').remove()
+        // Need the collection
+        const collection = collectionDisplayer.textContent.toLowerCase()
+        // Need the first 2 attributes
+        const attributes = document.querySelectorAll("th")
+        const keyAttributes = [attributes[0].textContent.toLowerCase(), attributes[1].textContent.toLowerCase()]
+        const jsonExport = {
+            [keyAttributes[0]]: keys[0],
+            [keyAttributes[1]]: keys[1],
+        }
+
+        // Save to database
+        const response = await fetch(`/delete?collection=${collection}`, {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(jsonExport)
+        })
+
+        const result = await response.json()
+
+        if (response.ok) {
+            console.log(`Entry deleted!`, result);
+            alert(`Entry deleted!`);
+            await buildTable(collection)
+            sortTable(0)
+        } else {
+            console.error("Error:", result);
+            alert(`Failed to delete entry`);
+        }
+        
+    } catch (error) {
+        console.error("Request failed:", error)
+        alert("Error: ", error)
+    }
+    
+    
 }
