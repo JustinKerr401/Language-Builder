@@ -235,23 +235,29 @@ function removeOption(button){
 
 // Fill a section with data from a document
 function fillSection(key, data){
-    const keys = data == null ? null : Object.keys(data) 
-    const values = data == null ? null : Object.values(data)
-    document.getElementById(0).value = key
-    // Only operate if data isn't null
-    if (keys !== null){
-        // Since there will always be more key value pairs than elements, iterate through key value pairs
-        let obID = 1
-        for (let index=1; index<keys.length; index++){
-            // Process if the key doesn't equal __v or phonemes
-            if (keys[index] !== "__v" && keys[index] !== "phonemes"){
-                while (document.getElementById(obID) == null){
-                    obID++
+    const keysValues = data == null ? null : Object.entries(data) 
+    // Iterate over each key-value pair to fill the section
+    for (let index = 0; index<keysValues.length; index++){
+        // Get all possible attributes and then match the current key to the correct one
+        document.querySelectorAll("#toBeFilled h2").forEach(attributeHeader => {
+            // Detect matching key
+            if (attributeHeader.textContent.slice(0, -1) == keysValues[index][0]){
+                // Insert differently depending on datatype
+                    // String case
+                if (typeof keysValues[index][1] === "string"){
+                    attributeHeader.nextElementSibling.value = keysValues[index][1]
+                }   // Array case
+                else {
+                    // Firstly, remove placeholder value (but store reference to "add" button first!)
+                    const addOptionButton = attributeHeader.nextElementSibling.nextElementSibling.nextElementSibling
+                    removeOption(addOptionButton.previousElementSibling)
+                    // Add an option for value
+                    keysValues[index][1].forEach(value => {
+                        addOption("none", addOptionButton, value)
+                    })
                 }
-                document.getElementById(obID).value = obID == 0 ? key : values[obID]
-                obID++
             }
-        }
+        })
     }
     
 }

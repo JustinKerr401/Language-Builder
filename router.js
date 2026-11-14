@@ -263,7 +263,7 @@ router.post("/save", async (req, res) => {
             // Update only specified attributes
             value = await Model.findOneAndUpdate(
                 keyObject,
-                { $set: updateData },
+                { $set: data },
                 {
                     returnDocument: 'after',
                     runValidators: true

@@ -71,4 +71,13 @@ const phonemeSchema = new mongoose.Schema({
     versionKey: false
 });
 
+phonemeSchema.index(
+    {
+        phoneme: 1
+    },
+    {
+        unique: true
+    }
+)
+
 module.exports = mongoose.model("Phoneme", phonemeSchema, "phonemes");

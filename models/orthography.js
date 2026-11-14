@@ -6,4 +6,13 @@ const orthographySchema = new mongoose.Schema({
     versionKey: false
 });
 
+orthographySchema.index(
+    {
+        language: 1
+    },
+    {
+        unique: true
+    }
+)
+
 module.exports = mongoose.model("Orthography", orthographySchema, "orthography");

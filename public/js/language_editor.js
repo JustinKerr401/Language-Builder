@@ -126,6 +126,12 @@ async function buildEditor(collection){
                 const elementPull = await fetch(`/data?collection=${collection}&filter=language:${languageSelector.value}`)
                 if (!elementPull) throw new Error ("Failed to fetch elements")
                 const elementsPulled = await elementPull.json()
+                const sortKey = collection.slice(0, -1)
+                elementsPulled.sort((a, b) => {
+                    return a[sortKey].localeCompare(
+                        b[sortKey]
+                    );
+                })
                 // Get useful string
                 const attribute = document.getElementById("othersEditorHeader").textContent.split(" ").at(-1).slice(0, -1)
                 // Build select element
@@ -196,6 +202,7 @@ async function buildEditor(collection){
                         div.classList.add("multipleInputs")
                         const header = document.createElement("h2")
                         header.textContent = `${keys[index]}:`
+                        header.classList.add("arrayInputs")
                         const button = document.createElement("button")
                         button.textContent = `+ another ${keys[index]}`
                         button.onclick = () => addOption(keys[index], button);
@@ -207,6 +214,14 @@ async function buildEditor(collection){
                         break
                 }
             }
+            // Add submit button
+            const submitButton = document.createElement("button")
+            submitButton.textContent = "Submit"
+            submitButton.style.gridColumn = "1 / -1"
+            submitButton.style.fontSize = "1.5rem"
+            submitButton.style.marginTop = "20px"
+            submitButton.onclick = () => submitOthersSection(collection)
+            othersEditor.appendChild(submitButton)
             break
     }
     // Trigger fillSection if needed
@@ -216,7 +231,6 @@ async function buildEditor(collection){
 }
 
 async function fillSection(collection, language, key){
-    console.log(`Collection: ${collection}\nLanguage: ${language}\nKey: ${key}`)
     // Build proper query string (add final filter if necessary)
     const primary = `/data?collection=${collection}&filter=language:${language}`
     const keyString = key == undefined ? "" : `,${collection.slice(0, -1)}:${key}`
@@ -228,20 +242,19 @@ async function fillSection(collection, language, key){
     const keysValues = Object.entries(data[0])
     // Iterate over each key-value pair to fill the section
     for (let index = 0; index<keysValues.length; index++){
-        console.log(keysValues[index])
-        // Get all possible input fields and then match the current key to the correct one
-        document.querySelectorAll("#othersEditor input").forEach(input => {
+        // Get all possible attributes and then match the current key to the correct one
+        document.querySelectorAll("#othersEditor h2").forEach(attributeHeader => {
             // Detect matching key
-            if (input.previousElementSibling.textContent.slice(0, -1) == keysValues[index][0]){
+            if (attributeHeader.textContent.slice(0, -1) == keysValues[index][0]){
                 // Insert differently depending on datatype
                     // String case
                 if (typeof keysValues[index][1] === "string"){
-                    input.value = keysValues[index][1]
+                    attributeHeader.nextElementSibling.value = keysValues[index][1]
                 }   // Array case
                 else {
                     // Firstly, remove placeholder value (but store reference to "add" button first!)
-                    const addOptionButton = input.nextElementSibling.nextElementSibling
-                    removeOption(input.nextElementSibling)
+                    const addOptionButton = attributeHeader.nextElementSibling.nextElementSibling.nextElementSibling
+                    removeOption(addOptionButton.previousElementSibling)
                     // Add an option for value
                     keysValues[index][1].forEach(value => {
                         addOption("none", addOptionButton, value)
@@ -278,14 +291,9 @@ function addPhonemeToList(value){
     display.textContent = value
     const button = document.createElement("button")
     button.textContent = "x"
-    button.onclick = () => deleteOption(button)
+    button.onclick = () => removeOption(button)
     languagePhonemeList.appendChild(display)
     languagePhonemeList.appendChild(button)
-}
-
-function deleteOption(button){
-    button.previousElementSibling.remove()
-    button.remove()
 }
 
 // ------------------------------ Saving functions ------------------------------
@@ -335,4 +343,61 @@ async function submitPhonemesEditor(){
     
 
 
+}
+
+async function submitOthersSection(collection){
+    try {
+        // Set up object to 
+        const jsonExport = {
+            language: languageSelector.value
+        }
+        // Iterate over all the headers (fields) in othersEditor
+        document.querySelectorAll("#othersEditor h2").forEach(attribute => {
+            // Set
+            // Operate differently depending 
+            const header = attribute.textContent.slice(0, -1)
+            switch (attribute.classList.contains("arrayInputs")){
+                // Case of multiple inputs
+                case true:
+                    let input = attribute.nextElementSibling
+                    let toAddArray = []
+                    while (input.tagName === "INPUT"){
+                        toAddArray.push(input.value)
+                        input = input.nextElementSibling.nextElementSibling
+                    }
+                    jsonExport[header] = toAddArray
+                    break
+                // Case of one input
+                case false:
+                    jsonExport[header] = attribute.nextElementSibling.value
+                    break
+            }
+        })
+
+        // Save to database
+        const response = await fetch(`/save?${collection}`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(jsonExport)
+        })
+
+        const result = await response.json()
+
+        if (response.ok) {
+            console.log(`${document.getElementById("othersEditorHeader").textContent.slice(0, -1)} saved:`, result);
+
+            alert(`${document.getElementById("othersEditorHeader").textContent.slice(0, -1)} saved successfully!`);
+            window.location.reload();
+        } else {
+            console.error("Error:", result);
+
+            alert(`Failed to save ${document.getElementById("othersEditorHeader").textContent.slice(0, -1)}`);
+        }
+    } catch (error) {
+        console.error("Request failed:", error)
+        alert("Error: ", error)
+    }
+    
 }

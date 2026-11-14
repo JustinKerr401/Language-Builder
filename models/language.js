@@ -13,4 +13,13 @@ const languageSchema = new mongoose.Schema({
     versionKey: false
 });
 
+languageSchema.index(
+    {
+        language: 1
+    },
+    {
+        unique: true
+    }
+)
+
 module.exports = mongoose.model("Language", languageSchema, "languages");

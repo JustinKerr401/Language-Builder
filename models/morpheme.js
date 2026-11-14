@@ -29,4 +29,14 @@ const morphemeSchema = new mongoose.Schema({
     versionKey: false
 });
 
+morphemeSchema.index(
+    {
+        morpheme: 1,
+        language: 1
+    },
+    {
+        unique: true
+    }
+)
+
 module.exports = mongoose.model("Morpheme", morphemeSchema, "morphemes");
