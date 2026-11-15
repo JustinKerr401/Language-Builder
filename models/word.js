@@ -20,8 +20,9 @@ const wordSchema = new mongoose.Schema({
             "adjective",
             "adverb",
             "pronoun",
-            "preposition",
-            "determiner"
+            "determiner",
+            "adposition",
+            "conjunction"
         ]
     },
     morphemes: { type: [String], default: [] },

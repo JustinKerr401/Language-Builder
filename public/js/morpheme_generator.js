@@ -5,6 +5,8 @@ const languageSelector = document.getElementById("languageSelector")
 const numSyllables = document.getElementById("numSyllables")
 const morphemeDisplay = document.querySelector("#display h1")
 const pronunciationDisplay = document.querySelector("#display h2")
+const onsetLength = document.getElementById("onsetLength")
+const codaLength = document.getElementById("codaLength")
 
 // Startup calls
 getLanguages()
@@ -54,7 +56,6 @@ async function generateSyllable(){
                 morpheme = morpheme + syllable.grapheme
                 pronunciation = pronunciation + "-" + syllable.pronunciation
             }
-            pronunciation = pronunciation.slice(1)
             break
 
         case "alphabet":
@@ -108,10 +109,8 @@ function getSyllable(phonotactics, consonants, vowels, clusters){
     let letters = ""
     let pronunciation = ""
     
-    const onsetChars = randomNumber(phonotactics.onset_min, phonotactics.onset_max)
-    const codaChars = randomNumber(phonotactics.coda_min, phonotactics.coda_max)
-
-    const odds = randomNumber(1, 100)
+    const onsetChars = onsetLength.value == "" ? randomNumber(phonotactics.onset_min, phonotactics.onset_max) : onsetLength.value
+    const codaChars = codaLength.value == "" ? randomNumber(phonotactics.coda_min, phonotactics.coda_max) : codaLength.value
     
         // Onset
     // Find proper cluster if onsetChars is over 1

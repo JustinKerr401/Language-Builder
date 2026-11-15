@@ -5,6 +5,7 @@ const filterInput = document.getElementById("filterInput")
 const theDatalist = document.getElementById("theDatalist")
 const filters = document.getElementById("filters")
 const collectionDisplayer = document.getElementById("collectionDisplayer")
+const count = document.getElementById("count")
 
 // Update input datalist
 filterSelect.addEventListener("change", ()   => {
@@ -147,6 +148,7 @@ async function buildTable(collection){
         })
 
     })
+    setCount()
     buildDatalist()
 }
 
@@ -213,6 +215,7 @@ function addFilter(){
             row.remove()
         }
     })
+    setCount()
 }
 
 async function deleteEntry(keys){
@@ -255,4 +258,8 @@ async function deleteEntry(keys){
     }
     
     
+}
+
+function setCount(){
+    count.textContent = `${document.querySelectorAll("tr").length-1} entries`
 }
