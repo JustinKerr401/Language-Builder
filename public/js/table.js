@@ -85,7 +85,19 @@ async function buildTable(collection){
         // Add a cell for every attribute
         columns.forEach(attribute => {
             const cell = document.createElement("td")
-            cell.textContent = data[attribute]
+            if (typeof data[attribute] === "string") {
+                cell.textContent = data[attribute];
+            } else {
+                // If multiple items in this attribute, seperate each with a newline
+                let innerHTML = ``
+                // Iterate over each array item
+                if (data[attribute] !== undefined){
+                    data[attribute].forEach(arrayItem => {
+                        innerHTML = innerHTML + arrayItem + "<br>"
+                    })
+                }
+                cell.innerHTML = innerHTML
+            }
             row.appendChild(cell)
         })
         // Add delete button
@@ -185,6 +197,8 @@ function sortTable(columnIndex) {
 function addFilter(){
     // Store value of filter
     const filter = [filterSelect.value, filterInput.value]
+    // Clear filter input
+    filterInput.value = ""
     if (filter.some(variable => variable.length === 0)) return
     // Set filter display
     const display = document.createElement("h2")

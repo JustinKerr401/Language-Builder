@@ -1,7 +1,15 @@
 const mongoose = require("mongoose");
 
 const orthographySchema = new mongoose.Schema({
-    language: { type: String, required: true }
+    language: { type: String, required: true },
+    writing_system: {
+        type: String,
+        enum: [
+            "alphabet",
+            "syllabary"
+        ]
+    },
+    spelling_conventions: { type: [String], default: []}
 },{
     versionKey: false
 });

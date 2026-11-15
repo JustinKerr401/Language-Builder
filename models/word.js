@@ -1,12 +1,29 @@
 const mongoose = require("mongoose");
 
 const wordSchema = new mongoose.Schema({
-    language: { type: String, required: true},
     word: { type: String, required: true },
-    structure: { type: String },
-    derives: { type: String },
-    class: { type: String },
-    function: { type: String },
+    language: { type: String, required: true},
+    structure: { 
+        type: String,
+        enum: [
+            "simplex",
+            "derived",
+            "compound",
+            "inflected"
+        ]
+    },
+    class: { 
+        type: String,
+        enum: [
+            "noun",
+            "verb",
+            "adjective",
+            "adverb",
+            "pronoun",
+            "preposition",
+            "determiner"
+        ]
+    },
     morphemes: { type: [String], default: [] },
     meaning: { type: [String], default: [] }
 },{
@@ -15,8 +32,8 @@ const wordSchema = new mongoose.Schema({
 
 wordSchema.index(
     {
-        language: 1,
-        word: 1
+        word: 1,
+        language: 1
     },
     {
         unique: true

@@ -1,0 +1,25 @@
+
+
+#menu {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    place-items: center;
+    gap: 20px;
+}
+
+#menu input, #menu select, #menu button {
+    height: 40px;
+    font-size: 1.5rem;
+}
+
+#menu button {
+    margin-top: 20px;
+    grid-column: 1 / -1;
+    width: 300px;
+}
+
+#display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}

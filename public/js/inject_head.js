@@ -6,6 +6,7 @@ header.innerHTML = `
 <a href="/">Home</a>
 <a href="/le">Language Editor</a>
 <a href="/table">Table</a>
+<a href="/mg">Morpheme Generator</a>
 `
 
 stylesheet.rel = "stylesheet"

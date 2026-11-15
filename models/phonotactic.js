@@ -6,7 +6,8 @@ const phonotacticSchema = new mongoose.Schema({
     onset_max: { type: String },
     coda_min: { type: String },
     coda_max: { type: String },
-    allowed_clusters: { type: [String], default: [] }
+    allowed_clusters: { type: [String], default: [] },
+    unique_syllables: { type: [String], default: [] }
 },{
     versionKey: false
 });

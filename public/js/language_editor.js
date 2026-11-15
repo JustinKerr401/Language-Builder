@@ -121,7 +121,7 @@ async function buildEditor(collection){
             `
             othersEditor.style.display = "grid"
             // Create a select element for graphemes and morphemes
-            if (collection == "graphemes" || collection == "morphemes") {
+            if (collection == "graphemes" || collection == "morphemes" || collection == "words") {
                 // Get elements
                 const elementPull = await fetch(`/data?collection=${collection}&filter=language:${languageSelector.value}`)
                 if (!elementPull) throw new Error ("Failed to fetch elements")

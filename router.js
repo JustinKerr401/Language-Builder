@@ -8,6 +8,7 @@ const Phonotactic = require('./models/phonotactic')
 const Orthography = require('./models/orthography')
 const Grapheme = require('./models/grapheme')
 const Morpheme = require('./models/morpheme')
+const Word = require('./models/word')
 const Language = require('./models/language')
 
 const models = {
@@ -16,6 +17,7 @@ const models = {
     orthography: Orthography,
     graphemes: Grapheme,
     morphemes: Morpheme,
+    words: Word,
     languages: Language
 }
 
@@ -38,9 +40,9 @@ router.get("/table", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "table.html"));
 });
 
-// Serve the grapheme generator
-router.get("/gg", (req, res) => {
-    res.sendFile(path.join(__dirname, "public", "html", "grapheme_generator.html"));
+// Serve the morpheme generator
+router.get("/mg", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "morpheme_generator.html"));
 });
 
 // ------------------------------ Pulling data ------------------------------
@@ -234,6 +236,11 @@ router.post("/save", async (req, res) => {
             case "morphemes":
                 Model = Morpheme
                 key = ["morpheme", "language"]
+                break
+            
+            case "words":
+                Model = Word
+                key = ["word", "language"]
                 break
             
             case "languages":

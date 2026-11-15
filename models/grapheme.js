@@ -6,11 +6,13 @@ const graphemeSchema = new mongoose.Schema({
     function: { 
         type: String,
         enum: [
-            "",
             "vowel",
-            "consonant"
+            "consonant",
+            "cluster",
+            "syllabogram"
         ]
     },
+    allowed_places: { type: [String], default: [] },
     phonemes: { type: [String] },
     pronunciation: { type: String }
 },{

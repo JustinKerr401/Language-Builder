@@ -12,7 +12,7 @@ const morphemeSchema = new mongoose.Schema({
     },
     ancestral_morpheme: { type: String },
     meaning: { type: [String], default: [] },
-    affixType: { 
+    affixPosition: { 
         type: String,
         enum: [
             "",
@@ -20,6 +20,14 @@ const morphemeSchema = new mongoose.Schema({
             "suffix",
             "infix",
             "circumfix"
+        ]
+    },
+    affixType: {
+        type: String, 
+        enum: [
+            "",
+            "Derivational",
+            "Inflectional"
         ]
     },
     inspiration_word: { type: String },
