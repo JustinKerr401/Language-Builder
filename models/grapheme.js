@@ -12,7 +12,7 @@ const graphemeSchema = new mongoose.Schema({
             "syllabogram"
         ]
     },
-    allowed_places: { type: [String], default: [] },
+    prohibited_places: { type: [String], default: [] },
     phonemes: { type: [String] },
     pronunciation: { type: String }
 },{

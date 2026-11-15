@@ -117,13 +117,17 @@ function getSyllable(phonotactics, consonants, vowels, clusters){
     // Find proper cluster if onsetChars is over 1
     if (onsetChars > 1){
         let pull = clusters[randomNumber(0, clusters.length-1)]
-        while (pull.grapheme.length !== onsetChars && pull.allowed_places.includes("onset")){
+        // Condition correcting
+        while (pull.grapheme.length !== onsetChars && pull.prohibited_places.includes("onset")){
             pull = clusters[randomNumber(0, clusters.length-1)]
         }letters = letters + pull.grapheme
         pronunciation = pronunciation + pull.pronunciation.split("-").join("")
     }// Get consonant if just 1
     else if (onsetChars > 0) {
         let pull = consonants[randomNumber(0, consonants.length-1)]
+        while (pull.prohibited_places.includes("onset")){
+            pull = consonants[randomNumber(0, consonants.length-1)]
+        }
         letters = letters + pull.grapheme
         pronunciation = pronunciation + pull.pronunciation
     }
@@ -134,16 +138,19 @@ function getSyllable(phonotactics, consonants, vowels, clusters){
     pronunciation = pronunciation + vowel.pronunciation
 
         // Coda
-    // Find proper cluster if onsetChars is over 1
+    // Find proper cluster if codaChars is over 1
     if (codaChars > 1){
         let pull = clusters[randomNumber(0, clusters.length-1)]
-        while (pull.grapheme.length !== codaChars && pull.allowed_places.includes("coda")){
+        while (pull.grapheme.length !== codaChars && pull.prohibited_places.includes("coda")){
             pull = clusters[randomNumber(0, clusters.length-1)]
         }letters = letters + pull.grapheme
         pronunciation = pronunciation + pull.pronunciation.split("-").join("")
     }// Get consonant if just 1
     else if (codaChars > 0) {
         let pull = consonants[randomNumber(0, consonants.length-1)]
+        while (pull.prohibited_places.includes("coda")){
+            pull = consonants[randomNumber(0, consonants.length-1)]
+        }
         letters = letters + pull.grapheme
         pronunciation = pronunciation + pull.pronunciation
     }
