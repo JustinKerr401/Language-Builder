@@ -1,0 +1,23 @@
+
+
+#opener {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#opener select {
+    font-size: 1.5rem;
+}
+
+#display {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+#firstCheck {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 100px;
+}

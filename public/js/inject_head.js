@@ -7,6 +7,7 @@ header.innerHTML = `
 <a href="/le">Language Editor</a>
 <a href="/table">Table</a>
 <a href="/mg">Morpheme Generator</a>
+<a href="/inconsistencies">Inconsistencies</a>
 `
 
 stylesheet.rel = "stylesheet"

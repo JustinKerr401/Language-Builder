@@ -45,6 +45,11 @@ router.get("/mg", (req, res) => {
     res.sendFile(path.join(__dirname, "public", "html", "morpheme_generator.html"));
 });
 
+// Serve the morpheme generator
+router.get("/inconsistencies", (req, res) => {
+    res.sendFile(path.join(__dirname, "public", "html", "inconsistencies.html"));
+});
+
 // ------------------------------ Pulling data ------------------------------
 
 // Get the schema for a collection
